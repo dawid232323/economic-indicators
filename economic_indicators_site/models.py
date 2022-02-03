@@ -19,3 +19,14 @@ class SystemUser(User):
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 
+
+class CompanySystemUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+
+
+#TODO
+# Supplement FullRaport model
+class FullRaport(models.Model):
+    pass
+

@@ -1,4 +1,5 @@
-from django.forms import ModelForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.forms import ModelForm, HiddenInput
 from django.forms import PasswordInput
 
 from . import models
@@ -22,7 +23,7 @@ class UserRegisterForm(ModelForm):
         }
 
 
-class LoginUserForm(ModelForm):
+class LoginUserForm(AuthenticationForm):
     class Meta:
         model = models.SystemUser
         fields = ['username', 'password']
@@ -33,3 +34,18 @@ class LoginUserForm(ModelForm):
         widgets = {
             'password': PasswordInput()
         }
+
+
+class TestRegisterForm(UserCreationForm):
+    class Meta:
+        model = models.User
+        fields = ['first_name', 'last_name', 'email', 'username']
+
+
+class AddUserCompanyForm(ModelForm):
+    class Meta:
+        model = models.CompanySystemUser
+        fields = ['user', 'company']
+        # widgets = {
+        #     'user': HiddenInput()
+        # }

@@ -1,13 +1,20 @@
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.views import View
-from django.views.generic.edit import FormView
+from django.views.generic import TemplateView
+from django.views.generic.edit import CreateView, FormView
+from django.contrib.auth.models import User
 
 from . import forms
+from . import models
 
 
 class RegisterView(FormView):
     form_class = forms.UserRegisterForm
-    template_name = 'economic_indicators_site/register_page.html'
+    template_name = 'economic_indicators_site/authentication/register_page.html'
     success_url = '/login'
 
     def form_valid(self, form):
@@ -15,11 +22,70 @@ class RegisterView(FormView):
         return super().form_valid(form)
 
 
-class LoginView(FormView):
-    form_class = forms.LoginUserForm
-    template_name = 'economic_indicators_site/login_page.html'
-    success_url = 'home'
+class LoginUserView(LoginView):
+    form_class = AuthenticationForm
+    template_name = 'economic_indicators_site/authentication/login_page.html'
+    next_page = '/home'
 
-    # TODO Create login authenticaion
     def form_valid(self, form):
-        return super().form_valid(form)
+        print(form.cleaned_data.get('username'))
+        try:
+            username = str(form.cleaned_data.get('username'))
+            logged_user = User.objects.get(username=username)
+            if not models.CompanySystemUser.objects.filter(user_id=logged_user.id).exists():
+                self.next_page = f'choose_company/?username={username}'
+            else:
+                self.next_page = f'/home'
+        except Exception as ex:
+            logged_user = None
+        finally:
+            return super().form_valid(form)
+
+
+class AddCompanySystemUserView(LoginRequiredMixin, CreateView):
+    form_class = forms.AddUserCompanyForm
+    template_name = 'economic_indicators_site/authentication/register_page.html'
+    success_url = '/home'
+    login_url = '/login'
+    redirect_field_name = ''
+
+    def get(self, request, *args, **kwargs):
+        if models.CompanySystemUser.objects.filter(user__username=request.user.username).exists():
+            return HttpResponseRedirect('/home')
+        return super(AddCompanySystemUserView, self).get(request, *args, **kwargs)
+
+#TODO
+# Add custom error page that will tell the user that he cannot choose anyone but himself
+    def form_valid(self, form):
+        username = str(self.request.GET.get('username'))
+        current_user = User.objects.get(username=username).username.replace(' ', '')
+        cleaned_username = str(form.cleaned_data['user']).replace(' ', '')
+        if cleaned_username != current_user:
+            raise Exception
+        else:
+            return super(AddCompanySystemUserView, self).form_valid(form)
+
+
+class RegisterNewUserView(SuccessMessageMixin, CreateView):
+    form_class = forms.TestRegisterForm
+    template_name = 'economic_indicators_site/authentication/register_page.html'
+    success_url = '/login'
+    success_message = 'User Created successfully'
+
+
+class LogOutUser(LogoutView):
+    next_page = '/login'
+    template_name = 'economic_indicators_site/authentication/login_page.html'
+
+
+class HomePageView(LoginRequiredMixin, TemplateView):
+    template_name = 'economic_indicators_site/homePage.html'
+    login_url = '/login'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        current_system_user = models.CompanySystemUser.objects.get(user__username=self.request.user.username)
+        context['username'] = self.request.user.username
+        # context['raports'] = models.FullRaport.objects.filter(company_id=current_system_user.company.id)
+        return context
+

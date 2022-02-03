@@ -1,0 +1,23 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static 'economic_indicators_site/main_styling.css' %}">
+    <link rel="stylesheet" href="{% static 'economic_indicators_site/components_styling/navbar_styling.css' %}">
+    <title>Home Page</title>
+</head>
+<body class="main-body">
+    <div class="nav-hbar-view">
+        <ul >
+            <li ><a href="/home">Strona Domowa</a></li>
+            <li ><a href="/new_raport">Stwórz Nowy Raport</a></li>
+            <li ><a href="/logout">Wyloguj Się</a></li>
+        </ul>
+    </div>
+    <div class="main_conent">
+        {% block content %}
+        {#    Here goes homePage text template#}
+        {% endblock %}
+    </div>
+</body>
