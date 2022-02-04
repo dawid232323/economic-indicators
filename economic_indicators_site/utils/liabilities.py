@@ -18,11 +18,16 @@ class LiabilitiesAndProvisions:
         self.towards_zus = tow_ZUS
         self.others = others
         self.short_term_liabilities = 0
+        self.sum = 0
 
     def sum_short_term_liabilities(self):
         self.short_term_liabilities = sum([self.short_term_borrowings, self.towards_suppliers,
                                            self.towards_budget, self.towards_zus, self.others])
         return self.short_term_liabilities
+
+    def sum_liabilities_and_provisions(self):
+        self.sum = sum([self.short_term_liabilities, self.long_term_liabilities])
+        return self.sum
 
 
 class OtherLiabilities:

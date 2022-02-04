@@ -22,13 +22,15 @@ dejf
 class CompanyAdmin(admin.ModelAdmin):
     list_filter = ('company_name',)
 
-@admin.register(models.CompanySystemUser)
-class SystemAdmin(admin.ModelAdmin):
-    list_filter = ('user',)
 
-@admin.register(models.FixedAssets)
-class AssetsAdmin(admin.ModelAdmin):
-    list_filter = ('identifier',)
+@admin.register(models.Assets)
+class SystemAdmin(admin.ModelAdmin):
+    list_filter = ('created_by', )
+
+
+@admin.register(models.Liabilities)
+class SystemAdmin(admin.ModelAdmin):
+    list_filter = ('created_by', )
 
 
 # admin.site.register(CompanyAdmin)

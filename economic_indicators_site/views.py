@@ -117,42 +117,38 @@ class CreateNewRaportBlockView(FormView):
         context['subject'] = self.page_title
         return context
 
-class CreateFixedAssetsView(LoginRequiredMixin, CreateNewRaportBlockView):
-    form_class = forms.AddFixedAssetsForm
-    login_url = '/login'
-    success_url = '/new_raport/fixed_assets/'
-    page_title = 'Uzupełnij Aktywa trwałe za '
 
-    def form_valid(self, form):
-        time_number = int(self.request.GET.get('number'))
-        if time_number == 8:
-            self.success_url = '/new_raport/current_assets/?number=1'
-        else:
-            self.success_url = f'/new_raport/fixed_assets/?number={time_number + 1}'
-        return super(CreateFixedAssetsView, self).form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        period = TIME_PERIODS[int(self.request.GET.get('number'))]
-        self.page_title = f'Uzupełnij aktywa trwałe za {period}'
-        return super(CreateFixedAssetsView, self).get_context_data()
-
-
-class CreateCurrentAssetsView(LoginRequiredMixin, CreateNewRaportBlockView):
+class AddNewAssetsView(LoginRequiredMixin, CreateNewRaportBlockView):
     template_name = 'economic_indicators_site/forms/basicForm.html'
-    form_class = forms.AddCurrentAssetsForm
+    form_class = forms.AddNewAssetsForm
     login_url = '/login'
-    success_url = '/new_raport/current_assets/'
+    success_url = '/new_raport/add_liabilities/'
 
     def form_valid(self, form):
         time_number = int(self.request.GET.get('number'))
-        if time_number == 8:
-            self.success_url = '/new_raport/liabilities_provisions/?number=1'
-        else:
-            self.success_url = f'/new_raport/current_assets/?number={time_number + 1}'
-        return super(CreateCurrentAssetsView, self).form_valid(form)
-    
+        self.success_url = f'/new_raport/add_liabilities/?number={time_number}'
+        return super(AddNewAssetsView, self).form_valid(form)
+
     def get_context_data(self, **kwargs):
         period = TIME_PERIODS[int(self.request.GET.get('number'))]
-        self.page_title = f'Uzupełnij aktywa obrotowe za {period}'
-        return super(CreateCurrentAssetsView, self).get_context_data(**kwargs)
+        self.page_title = f'Uzupełnij Aktywa za {period}'
+        return super(AddNewAssetsView, self).get_context_data(**kwargs)
+
+
+class AdddNewLiabilitiesView(LoginRequiredMixin, CreateNewRaportBlockView):
+    template_name = 'economic_indicators_site/forms/basicForm.html'
+    form_class = forms.AddNewLiabilities
+    login_url = '/login'
+    success_url = '/new_raport/add_profits_loses/'
+
+    def get_context_data(self, **kwargs):
+        period = TIME_PERIODS[int(self.request.GET.get('number'))]
+        self.page_title = f'Uzupełnij Pasywa za {period}'
+        return super(AdddNewLiabilitiesView, self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        time_number = int(self.request.GET.get('number'))
+        self.success_url = f'/new_raport/add_profts_loses/?number={time_number}'
+        return super(AdddNewLiabilitiesView, self).form_valid(form)
+
 
