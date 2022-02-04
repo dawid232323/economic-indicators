@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'economic_indicators_site',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

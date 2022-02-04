@@ -49,3 +49,40 @@ class AddUserCompanyForm(ModelForm):
         # widgets = {
         #     'user': HiddenInput()
         # }
+
+
+class AddFixedAssetsForm(ModelForm):
+
+    def save(self, commit=True):
+        if self.errors:
+            raise ValueError(
+                "The %s could not be %s because the data didn't validate." % (
+                    self.instance._meta.object_name,
+                    'created' if self.instance._state.adding else 'changed',
+                )
+            )
+        if commit:
+            user = self.cleaned_data.get('user')
+            time = self.cleaned_data.get('time_period')
+            self.instance.save(user=user, time_period=time)
+        return self.instance
+
+    class Meta:
+        model = models.FixedAssets
+        fields = ['intangible_assets', 'real_estates',
+                  'tools_machines', 'transport', 'others']
+
+
+class AddCurrentAssetsForm(ModelForm):
+
+    def save(self, commit=True):
+        if commit:
+            user = self.cleaned_data.get('user')
+            time = self.cleaned_data.get('time_period')
+            self.instance.save(user=user, time_period=time)
+            return self.instance
+
+    class Meta:
+        model = models.CurrentAssets
+        exclude = ['created_by', 'time_period', 'identifier', 'sum_of_supplies',
+                   'sum_of_current_assets', 'sum_of_debts']

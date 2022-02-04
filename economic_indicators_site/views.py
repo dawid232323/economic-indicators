@@ -12,6 +12,18 @@ from . import forms
 from . import models
 
 
+TIME_PERIODS = {
+    1: "Poprzedni okres obrachunkowy (x-3)",
+    2: "Poprzedni okres obrachunkowy (x-2)",
+    3: "Ostatni okres obrachunkowy (x-1)",
+    4: 'Okres bieżący (x)',
+    5: 'Prognoza na koniec okresu (x)',
+    6: 'Prognoza na koniec kolejnego roku (x+1)',
+    7: 'Prognoza na koniec kolejnego roku (x+2)',
+    8: 'Prognoza na koniec kolejnego roku (x+3)'
+}
+
+
 class RegisterView(FormView):
     form_class = forms.UserRegisterForm
     template_name = 'economic_indicators_site/authentication/register_page.html'
@@ -88,4 +100,59 @@ class HomePageView(LoginRequiredMixin, TemplateView):
         context['username'] = self.request.user.username
         # context['raports'] = models.FullRaport.objects.filter(company_id=current_system_user.company.id)
         return context
+
+
+class CreateNewRaportBlockView(FormView):
+    template_name = 'economic_indicators_site/forms/basicForm.html'
+    page_title = 'Uzupełnij'
+
+    def form_valid(self, form): #Here developer needs to fill the success_url
+        form.cleaned_data['user'] = self.request.user
+        form.cleaned_data['time_period'] = int(self.request.GET.get('number'))
+        form.save()
+        return super(CreateNewRaportBlockView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs): # Here user has to fill the page_title
+        context = super(CreateNewRaportBlockView, self).get_context_data(**kwargs)
+        context['subject'] = self.page_title
+        return context
+
+class CreateFixedAssetsView(LoginRequiredMixin, CreateNewRaportBlockView):
+    form_class = forms.AddFixedAssetsForm
+    login_url = '/login'
+    success_url = '/new_raport/fixed_assets/'
+    page_title = 'Uzupełnij Aktywa trwałe za '
+
+    def form_valid(self, form):
+        time_number = int(self.request.GET.get('number'))
+        if time_number == 8:
+            self.success_url = '/new_raport/current_assets/?number=1'
+        else:
+            self.success_url = f'/new_raport/fixed_assets/?number={time_number + 1}'
+        return super(CreateFixedAssetsView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        period = TIME_PERIODS[int(self.request.GET.get('number'))]
+        self.page_title = f'Uzupełnij aktywa trwałe za {period}'
+        return super(CreateFixedAssetsView, self).get_context_data()
+
+
+class CreateCurrentAssetsView(LoginRequiredMixin, CreateNewRaportBlockView):
+    template_name = 'economic_indicators_site/forms/basicForm.html'
+    form_class = forms.AddCurrentAssetsForm
+    login_url = '/login'
+    success_url = '/new_raport/current_assets/'
+
+    def form_valid(self, form):
+        time_number = int(self.request.GET.get('number'))
+        if time_number == 8:
+            self.success_url = '/new_raport/liabilities_provisions/?number=1'
+        else:
+            self.success_url = f'/new_raport/current_assets/?number={time_number + 1}'
+        return super(CreateCurrentAssetsView, self).form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        period = TIME_PERIODS[int(self.request.GET.get('number'))]
+        self.page_title = f'Uzupełnij aktywa obrotowe za {period}'
+        return super(CreateCurrentAssetsView, self).get_context_data(**kwargs)
 

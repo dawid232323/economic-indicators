@@ -26,5 +26,9 @@ class CompanyAdmin(admin.ModelAdmin):
 class SystemAdmin(admin.ModelAdmin):
     list_filter = ('user',)
 
+@admin.register(models.FixedAssets)
+class AssetsAdmin(admin.ModelAdmin):
+    list_filter = ('identifier',)
+
 
 # admin.site.register(CompanyAdmin)

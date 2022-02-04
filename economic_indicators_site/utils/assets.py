@@ -11,6 +11,7 @@ class FixedAssets:
 
     def sum_tangible_assets(self):
         self.tangible_fixed_assets = sum([self.real_estates, self.tools_machines, self.transport, self.others])
+        return self.tangible_fixed_assets
 
     def get_all_fixed_assets(self):
         if self.tangible_fixed_assets == 0:
