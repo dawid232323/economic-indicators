@@ -77,3 +77,17 @@ class AddNewLiabilities(ModelForm):
         model = models.Liabilities
         exclude = ['created_by', 'time_period', 'identifier', 'short_term_liabilities',
                    'sum_liabilities_and_provisions']
+
+
+class AddNewProfitsLosesForm(ModelForm):
+    def save(self, commit=True):
+        if commit:
+            user = self.cleaned_data.get('user')
+            time = self.cleaned_data.get('time_period')
+            self.instance.save(user=user, time_period=time)
+            return self.instance
+
+    class Meta:
+        model = models.ProfitsLoses
+        exclude = ['created_by', 'time_period', 'identifier', 'netto_income_sum', 'supply_change_sum',
+                   'income_costs', 'gross_income', 'netto_income', 'stopped_costs', 'operating_expenses_sum',]

@@ -50,10 +50,35 @@ class Calculator:
 
     def __init__(self, netto_income: NettoIncome, operating_expenses: OperatingExpenses, supply_change: SupplyChange,
                  in_tax, own_main_cost, red_fixed_assets):
+        self.operating_expenses = operating_expenses
+        self.netto_income_instance = netto_income
+        self.supply_change = supply_change
         self.income_tax = in_tax
         self.owners_maintnance_cost = own_main_cost
         self.redemption_of_fixed_assets = red_fixed_assets
-        self.income_costs = operating_expenses.sum_operating_expenses() - supply_change.calculate_change()
-        self.gross_income = netto_income.sum_netto_sales_income() - self.income_costs
+        self.income_costs = 0
+        self.gross_income = 0
+        self.netto_income = 0
+        self.stopped_income = 0
+
+    def sum_income_costs(self):
+        self.income_costs = self.operating_expenses.sum_operating_expenses() - self.supply_change.calculate_change()
+        return self.income_costs
+
+    def sum_gross_income(self):
+        if self.income_costs == 0:
+            self.income_costs = self.sum_income_costs()
+        self.gross_income = self.netto_income_instance.sum_netto_sales_income() - self.income_costs
+        return self.gross_income
+
+    def sum_netto_income(self):
+        if self.gross_income == 0:
+            self.gross_income = self.sum_gross_income()
         self.netto_income = self.gross_income - self.income_tax
+        return self.netto_income
+
+    def sum_stopped_income(self):
+        if self.netto_income == 0:
+            self.netto_income = self.sum_netto_income()
         self.stopped_income = self.netto_income - self.owners_maintnance_cost
+        return self.stopped_income

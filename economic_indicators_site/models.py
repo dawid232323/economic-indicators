@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from economic_indicators_site.utils import assets, liabilities, profits_loses
-from economic_indicators_site.utils.functions import identify
+from economic_indicators_site.utils.functions import identify, clearify
+from economic_indicators_site.utils.profits_loses import NettoIncome, OperatingExpenses, SupplyChange, Calculator
 
 # Create your models here.
 
@@ -91,8 +92,7 @@ class Assets(models.Model):
         self.sum_of_supplies = curr_assets.sum_supplies()
         self.sum_of_debts = curr_assets.sum_debts()
         self.sum_of_current_assets = curr_assets.sum_current_assets()
-        if self.time_period == 8:
-            company_system_user_instance.num_of_reports += 1
+        clearify(Assets, self.identifier)
         return super(Assets, self).save(**kwargs)
 
 
@@ -140,12 +140,77 @@ class Liabilities(models.Model):
         self.__check_existance()
         kwargs.__delitem__('user')
         kwargs.__delitem__('time_period')
+        clearify(Liabilities, self.identifier)
         return super(Liabilities, self).save(**kwargs)
+
+
+class ProfitsLoses(models.Model):
+    created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
+    time_period = models.IntegerField()
+    identifier = models.CharField(max_length=10, db_index=True)
+    netto_income_sum = models.FloatField()
+    operation_br_income = models.FloatField(default=0)
+    products_netto_income = models.FloatField(default=0)
+    goods_materials_netto_income = models.FloatField(default=0)
+    other_netto_income = models.FloatField(default=0)
+    dotations = models.FloatField(default=0)
+    operating_expenses_sum = models.FloatField()
+    depreciation = models.FloatField(default=0)
+    materials_energy_use = models.FloatField(default=0)
+    foreign_services = models.FloatField(default=0)
+    taxes = models.FloatField(default=0)
+    salaries = models.FloatField(default=0)
+    interesr_comissions = models.FloatField(default=0)
+    interests = models.FloatField(default=0)
+    sold_goods_values = models.FloatField(default=0)
+    other_expenses = models.FloatField(default=0)
+    supply_change_sum = models.FloatField()
+    supply_beg_state = models.FloatField(default=0)
+    supply_end_state = models.FloatField(default=0)
+    income_costs = models.FloatField()
+    gross_income = models.FloatField()
+    income_tax = models.FloatField(default=0)
+    netto_income = models.FloatField()
+    owner_maintnance_costs = models.FloatField(default=0)
+    stopped_costs = models.FloatField()
+    redemption_of_fixed_assets = models.FloatField(default=0)
+
+    def save(self, **kwargs):
+        logged_user = CompanySystemUser.objects.get(user__username=kwargs['user'])
+        self.created_by = logged_user
+        self.time_period = kwargs['time_period']
+        kwargs.__delitem__('time_period')
+        kwargs.__delitem__('user')
+        self.identifier = identify(self.created_by.user.id, self.created_by.num_of_reports,
+                                   self.time_period)
+        netto_income = NettoIncome(self.operation_br_income, self.products_netto_income,
+                                   self.goods_materials_netto_income, self.other_netto_income, self.dotations)
+        self.netto_income_sum = netto_income.sum_netto_sales_income()
+        operating_expenses = OperatingExpenses(self.depreciation, self.materials_energy_use, self.foreign_services,
+                                               self.taxes, self.salaries, self.interesr_comissions, self.interests,
+                                               self.sold_goods_values, self.other_expenses)
+        self.operating_expenses_sum = operating_expenses.sum_operating_expenses()
+        supply_change = SupplyChange(self.supply_beg_state, self.supply_end_state)
+        self.supply_change_sum = supply_change.calculate_change()
+        calc = Calculator(netto_income, operating_expenses, supply_change, self.income_tax,
+                          self.owner_maintnance_costs, self.redemption_of_fixed_assets)
+        self.income_costs = calc.sum_income_costs()
+        self.gross_income = calc.sum_gross_income()
+        self.netto_income = calc.sum_netto_income()
+        self.stopped_costs = calc.sum_stopped_income()
+        clearify(ProfitsLoses, self.identifier)
+        if int(self.time_period) == 8:
+            logged_user.num_of_reports += 1
+        return super(ProfitsLoses, self).save(**kwargs)
 
 
 
 #TODO
-# Supplement FullRaport model
+# Supplement FullRaport model. One model should correspond to one time period.
+# View that will display full raport should check
+# If raport with such identifier already exists.
+# If not it should generate 8 raport models each corresponding to the certain time period.
+# RaportView should display these 8 given reports as table like in the excel example
 
 
 class FullRaport(models.Model):

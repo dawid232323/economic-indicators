@@ -33,4 +33,9 @@ class SystemAdmin(admin.ModelAdmin):
     list_filter = ('created_by', )
 
 
+@admin.register(models.ProfitsLoses)
+class ProfitAdmin(admin.ModelAdmin):
+    list_filter = ('created_by', )
+
+
 # admin.site.register(CompanyAdmin)

@@ -152,3 +152,24 @@ class AdddNewLiabilitiesView(LoginRequiredMixin, CreateNewRaportBlockView):
         return super(AdddNewLiabilitiesView, self).form_valid(form)
 
 
+class AddNewProfitsLosesView(LoginRequiredMixin, CreateNewRaportBlockView):
+    form_class = forms.AddNewProfitsLosesForm
+    login_url = '/login'
+    success_url = '/new_raport/add_assets'
+
+    def get_context_data(self, **kwargs):
+        period = TIME_PERIODS[int(self.request.GET.get('number'))]
+        self.page_title = f'Uzupełnij Rachunek Zysków i Strat za {period}'
+        return super(AddNewProfitsLosesView, self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        time_number = self.request.GET.get('number')
+        if time_number == 8:
+            current_user = models.CompanySystemUser.objects.get(user__username=self.request.GET.get('user'))
+            identifier = current_user.user.id + '.' + current_user.num_of_reports
+            self.success_url = f'/generate_raport/?identifier={identifier}'
+        else:
+            self.success_url = f'/new_raport/add_assets/?number={int(time_number) + 1}'
+        return super(AddNewProfitsLosesView, self).form_valid(form)
+
+
