@@ -12,6 +12,7 @@ class NettoIncome:
         self.sum = sum([self.products_netto_income, self.goods_materials_netto_income, self.other_netto_income])
         return self.sum
 
+
 class OperatingExpenses:
 
     def __init__(self, depreciation, materials_energy_usage, foreign_services, taxes, salaries, interest_commissions,

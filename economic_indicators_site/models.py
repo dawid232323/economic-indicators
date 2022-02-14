@@ -1,11 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from economic_indicators_site.utils import assets, liabilities, profits_loses
+from economic_indicators_site.utils import assets, liabilities
 from economic_indicators_site.utils.functions import identify, clearify
 from economic_indicators_site.utils.profits_loses import NettoIncome, OperatingExpenses, SupplyChange, Calculator
+from economic_indicators_site.utils.raport_generator import RaportGenerator
 
-# Create your models here.
 
 TIME_PERIODS = {
     1: "Poprzedni okres obrachunkowy (x-3)",
@@ -72,6 +72,9 @@ class Assets(models.Model):
     sum_of_debts = models.FloatField()
     sum_of_current_assets = models.FloatField()
 
+    class Meta:
+        ordering = ['time_period']
+
     def save(self, **kwargs):
         company_system_user_instance = CompanySystemUser.objects.get(user__username=kwargs['user'])
         self.created_by = company_system_user_instance
@@ -114,6 +117,9 @@ class Liabilities(models.Model):
     dotations = models.FloatField(default=0)
     short_term_liabilities = models.FloatField()
     sum_liabilities_and_provisions = models.FloatField()
+
+    class Meta:
+        ordering = ['time_period']
 
     def __check_existance(self):
         try:
@@ -175,6 +181,9 @@ class ProfitsLoses(models.Model):
     stopped_costs = models.FloatField()
     redemption_of_fixed_assets = models.FloatField(default=0)
 
+    class Meta:
+        ordering = ['time_period']
+
     def save(self, **kwargs):
         logged_user = CompanySystemUser.objects.get(user__username=kwargs['user'])
         self.created_by = logged_user
@@ -203,6 +212,59 @@ class ProfitsLoses(models.Model):
             logged_user.num_of_reports += 1
         return super(ProfitsLoses, self).save(**kwargs)
 
+
+class FullRaportBlock(models.Model):
+    created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
+    time_period = models.IntegerField()
+    identifier = models.CharField(max_length=10, db_index=True, null=False)
+    money_surplus = models.FloatField(default=0)
+    bilans_sh_lil_ratio = models.FloatField(default=0)
+    financial_prop_score = models.FloatField(default=0)
+    financial_sc_sales_rel = models.FloatField(default=0)
+    supp_rev_relaton = models.FloatField(default=0)
+    assets_rotation = models.FloatField(default=0)
+    company_assessment = models.FloatField(default=0)
+    liquidity_ratio = models.FloatField(default=0)
+    return_on_assets_ratio = models.FloatField(default=0)
+    profitability_of_revenue_ratio = models.FloatField(default=0)
+    debt_ratio = models.FloatField(default=0)
+    company_prediction = models.CharField(max_length=30)
+
+    class Meta:
+        ordering = ['time_period']
+
+    def save(self, **kwargs):
+        self.created_by = kwargs['user']
+        self.time_period = kwargs['time_period']
+        self.identifier = kwargs['identifier']
+        raport_generator = RaportGenerator(kwargs['fixed_assets'], kwargs['current_assets'], kwargs['equity'],
+                                           kwargs['liabilities_provisions'], kwargs['other_liabilities'],
+                                           kwargs['profit_loses_calc'], kwargs['netto_income'], kwargs['operating_expenses'],
+                                           kwargs['supply_change'])
+        self.money_surplus = raport_generator.calculate_money_surplus()
+        self.bilans_sh_lil_ratio = raport_generator.calculate_bilans_short_liabelities_ratio()
+        self.financial_prop_score = raport_generator.calculate_financial_property_score()
+        self.financial_sc_sales_rel = raport_generator.calculate_financial_score_sales_relation()
+        self.supp_rev_relaton = raport_generator.calculate_supplies_revenue_relation()
+        self.assets_rotation = raport_generator.calculate_assets_rotation()
+        self.company_assessment = raport_generator.calculate_company_assesment()
+        self.company_prediction = raport_generator.get_company_prediction()
+        self.liquidity_ratio = raport_generator.calculate_liquidity_ratio()
+        self.return_on_assets_ratio = raport_generator.calculate_return_on_assets_ratio()
+        self.profitability_of_revenue_ratio = raport_generator.calculate_profitability_of_revenue_ratio()
+        self.debt_ratio = raport_generator.calculate_debt_ratio()
+
+        kwargs.__delitem__('fixed_assets')
+        kwargs.__delitem__('current_assets')
+        kwargs.__delitem__('equity')
+        kwargs.__delitem__('liabilities_provisions')
+        kwargs.__delitem__('other_liabilities')
+        kwargs.__delitem__('profit_loses_calc')
+        kwargs.__delitem__('netto_income')
+        kwargs.__delitem__('operating_expenses')
+        kwargs.__delitem__('supply_change')
+
+        return super(FullRaportBlock, self).save(**kwargs)
 
 
 #TODO

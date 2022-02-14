@@ -10,10 +10,10 @@ class RaportGenerator:
                  other_liabilities: liabilities.OtherLiabilities, profit_loses_calc: profits_loses.Calculator,
                  netto_income: profits_loses.NettoIncome, operating_expenses: profits_loses.OperatingExpenses,
                  supply_change: profits_loses.SupplyChange):
-        self.debt_ratio = 0
-        self.profitability_of_revenue_ratio = 0
-        self.return_on_assets_ratio = 0
-        self.liquidity_ratio = 0
+        self.debt_ratio = 0 # wskaznik zadluzenia
+        self.profitability_of_revenue_ratio = 0 # wskaznik rentownosci obrotu
+        self.return_on_assets_ratio = 0 # wskaznik rentownosci majatku
+        self.liquidity_ratio = 0 # wskaznik plynnosci
         self.fixed_assets = fixed_ssets
         self.current_assets = current_assets
         self.equity = equity
@@ -23,25 +23,27 @@ class RaportGenerator:
         self.netto_income = netto_income
         self.operating_expenses = operating_expenses
         self.supply_change = supply_change
-        self.money_surplus = 0
-        self.bilans_sh_lil_ratio = 0
-        self.financial_prop_score = 0
-        self.financial_sc_sales_rel = 0
-        self.supp_rev_relation = 0
-        self.assets_rotation = 0
-        self.company_assessment = 0
+        self.money_surplus = 0 # relacja nadwyzek pienieznych
+        self.bilans_sh_lil_ratio = 0 # stosunek sumy bilansowej
+        self.financial_prop_score = 0 # relacja wyniku finansowegodo do majatku
+        self.financial_sc_sales_rel = 0 # relacja wyniku finansowego
+        self.supp_rev_relation = 0 # relacja zapasow
+        self.assets_rotation = 0 # relacja sprzedazy do aktywow
+        self.company_assessment = 0 # ocena przedsiebiorstwa
 
     def calculate_money_surplus(self):
-        parameter = self.liabilities_provisions.short_term_liabilities + self.liabilities_provisions.long_term_liabilities
+        parameter = self.liabilities_provisions.sum_short_term_liabilities()\
+                    + self.liabilities_provisions.long_term_liabilities
         if parameter == 0:
             return 0
         else:
-            self.money_surplus = (
-                                             self.operating_expenses.depreciation + self.profit_loses_calc.gross_income) / parameter
+            self.money_surplus = \
+                (self.operating_expenses.depreciation + self.profit_loses_calc.sum_gross_income()) / parameter
             return self.money_surplus
 
     def calculate_bilans_short_liabelities_ratio(self):
-        parameter = self.liabilities_provisions.short_term_liabilities + self.liabilities_provisions.long_term_liabilities
+        parameter = self.liabilities_provisions.sum_short_term_liabilities()\
+                    + self.liabilities_provisions.long_term_liabilities
         if parameter == 0:
             return 0
         else:
@@ -54,7 +56,7 @@ class RaportGenerator:
         if parameter == 0:
             return 0
         else:
-            self.financial_prop_score = parameter / self.profit_loses_calc.gross_income
+            self.financial_prop_score = self.profit_loses_calc.sum_gross_income() / parameter
             return self.financial_prop_score
 
     def calculate_financial_score_sales_relation(self):
@@ -62,7 +64,7 @@ class RaportGenerator:
         if parameter == 0:
             return 0
         else:
-            self.financial_sc_sales_rel = self.profit_loses_calc.gross_income / parameter
+            self.financial_sc_sales_rel = self.profit_loses_calc.sum_gross_income() / parameter
             return self.financial_sc_sales_rel
 
     def calculate_supplies_revenue_relation(self):
@@ -104,7 +106,7 @@ class RaportGenerator:
         if parameter == 0:
             return 0
         else:
-            self.liquidity_ratio = self.fixed_assets.sum_tangible_assets() / parameter
+            self.liquidity_ratio = self.current_assets.sum_current_assets() / parameter
             return self.liquidity_ratio
 
     def calculate_return_on_assets_ratio(self):
@@ -112,7 +114,8 @@ class RaportGenerator:
         if parameter == 0:
             return 0
         else:
-            self.return_on_assets_ratio: float = self.profit_loses_calc.netto_income / parameter
+            print('in else')
+            self.return_on_assets_ratio: float = self.profit_loses_calc.sum_netto_income() / parameter
             return self.return_on_assets_ratio
 
     def calculate_profitability_of_revenue_ratio(self):
@@ -120,7 +123,7 @@ class RaportGenerator:
         if parameter == 0:
             return 0
         else:
-            self.profitability_of_revenue_ratio = self.profit_loses_calc.netto_income / parameter
+            self.profitability_of_revenue_ratio = self.profit_loses_calc.sum_netto_income() / parameter
             return self.profitability_of_revenue_ratio
 
     def calculate_debt_ratio(self):
@@ -128,5 +131,6 @@ class RaportGenerator:
         if parameter == 0:
             return 0
         else:
-            self.debt_ratio = (self.liabilities_provisions.sum_short_term_liabilities() + self.liabilities_provisions.long_term_liabilities) / parameter
+            self.debt_ratio = (self.liabilities_provisions.sum_short_term_liabilities()
+                               + self.liabilities_provisions.long_term_liabilities) / parameter
             return self.debt_ratio
