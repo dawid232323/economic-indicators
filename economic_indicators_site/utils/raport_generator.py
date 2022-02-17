@@ -1,6 +1,6 @@
-import assets
-import liabilities
-import profits_loses
+from . import assets
+from . import liabilities
+from . import profits_loses
 
 
 class RaportGenerator:

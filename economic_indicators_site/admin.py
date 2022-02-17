@@ -27,6 +27,12 @@ class CompanyAdmin(admin.ModelAdmin):
 class SystemAdmin(admin.ModelAdmin):
     list_filter = ('created_by', )
 
+    def save_model(self, request, obj, form, change, **kwargs):
+        user = obj.created_by.user.username
+        time_period = obj.time_period
+        obj.save(user=user, time_period=time_period, **kwargs)
+
+
 
 @admin.register(models.Liabilities)
 class SystemAdmin(admin.ModelAdmin):
@@ -36,6 +42,16 @@ class SystemAdmin(admin.ModelAdmin):
 @admin.register(models.ProfitsLoses)
 class ProfitAdmin(admin.ModelAdmin):
     list_filter = ('created_by', )
+
+
+@admin.register(models.FullRaportBlock)
+class RaportBlockAdmin(admin.ModelAdmin):
+    list_filter = ('created_by', )
+
+
+@admin.register(models.CompanySystemUser)
+class CompanySystemUserAdmin(admin.ModelAdmin):
+    list_filter = ('user', )
 
 
 # admin.site.register(CompanyAdmin)

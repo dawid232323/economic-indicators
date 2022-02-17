@@ -1,5 +1,6 @@
+from django.views.generic.base import RedirectView
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView, LogoutView, TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
@@ -10,7 +11,7 @@ from django.contrib.auth.models import User
 
 from . import forms
 from . import models
-
+from .utils import assets, liabilities, profits_loses
 
 TIME_PERIODS = {
     1: "Poprzedni okres obrachunkowy (x-3)",
@@ -148,7 +149,7 @@ class AdddNewLiabilitiesView(LoginRequiredMixin, CreateNewRaportBlockView):
 
     def form_valid(self, form):
         time_number = int(self.request.GET.get('number'))
-        self.success_url = f'/new_raport/add_profts_loses/?number={time_number}'
+        self.success_url = f'/new_raport/add_profits_loses/?number={time_number}'
         return super(AdddNewLiabilitiesView, self).form_valid(form)
 
 
@@ -164,12 +165,100 @@ class AddNewProfitsLosesView(LoginRequiredMixin, CreateNewRaportBlockView):
 
     def form_valid(self, form):
         time_number = self.request.GET.get('number')
-        if time_number == 8:
-            current_user = models.CompanySystemUser.objects.get(user__username=self.request.GET.get('user'))
-            identifier = current_user.user.id + '.' + current_user.num_of_reports
+        if int(time_number) == 8:
+            current_user = models.CompanySystemUser.objects.get(user__username=self.request.user)
+            identifier = f"{current_user.user.id}.{current_user.num_of_reports}"
             self.success_url = f'/generate_raport/?identifier={identifier}'
         else:
             self.success_url = f'/new_raport/add_assets/?number={int(time_number) + 1}'
         return super(AddNewProfitsLosesView, self).form_valid(form)
+
+class GenerateRaportView(LoginRequiredMixin, RedirectView):
+    url = ''
+    existing_raport_id = -1
+    proper_identifier = ''
+    login_url = '/login'
+
+    def __check_raport_existance(self):
+        id = self.request.GET.get('identifier')
+        try:
+            raport_identifier = models.FullRaportBlock.objects.get(identifier__contains=id)
+            self.existing_raport_id = raport_identifier.id
+            return True
+        except:
+            return False
+
+    def __get_wanted_queries(self):
+        assets = models.Assets.objects.filter(identifier__contains=self.proper_identifier)
+        liababilities = models.Liabilities.objects.filter(identifier__contains=self.proper_identifier)
+        profits_loses = models.ProfitsLoses.objects.filter(identifier__contains=self.proper_identifier)
+        return assets, liababilities, profits_loses
+
+    def __assets_instances_generator(self, assets_model: models.Assets):
+        fixed_assets = assets.FixedAssets(assets_model.intangible_fixed_assets,
+                                          assets_model.real_estates, assets_model.tools_machines,
+                                          assets_model.transport, assets_model.others)
+        current_assets = assets.CurrentAssets(assets_model.materials_resources, assets_model.products_halfproducts_in_progress,
+                                              assets_model.ready_products, assets_model.goods, assets_model.other_supplies,
+                                              assets_model.delivery_debts, assets_model.owner_debts, assets_model.money,
+                                              assets_model.other_current_assets)
+        return fixed_assets, current_assets
+
+    def __liabilities_instances_generator(self, liabilities_model: models.Liabilities):
+        equity = liabilities.Equity(liabilities_model.own_capitals, liabilities_model.stopped_profit_of_own_capitals)
+        liabilities_provisions = liabilities.LiabilitiesAndProvisions(liabilities_model.long_term_liabilities,
+                                                                      liabilities_model.long_term_loans_borrowings,
+                                                                      liabilities_model.short_term_borrowings, liabilities_model.towards_suppliers,
+                                                                      liabilities_model.outdated_towards_suppliers, liabilities_model.towards_budget,
+                                                                      liabilities_model.towards_zus, liabilities_model.other_short_term_liabilities)
+        other_liabilities = liabilities.OtherLiabilities(liabilities_model.other_liabilities,
+                                                         liabilities_model.dotations)
+        return equity, liabilities_provisions, other_liabilities
+
+    def __profits_loses_instances_generator(self, profits_model: models.ProfitsLoses):
+        netto_income = profits_loses.NettoIncome(profits_model.operation_br_income, profits_model.products_netto_income,
+                                                 profits_model.goods_materials_netto_income, profits_model.other_netto_income,
+                                                 profits_model.dotations)
+        operating_expenses = profits_loses.OperatingExpenses(profits_model.depreciation, profits_model.materials_energy_use,
+                                                             profits_model.foreign_services, profits_model.taxes, profits_model.salaries,
+                                                             profits_model.interesr_comissions, profits_model.interests, profits_model.sold_goods_values,
+                                                             profits_model.other_expenses)
+        supply_change = profits_loses.SupplyChange(profits_model.supply_beg_state, profits_model.supply_end_state)
+        calculator = profits_loses.Calculator(netto_income, operating_expenses, supply_change,
+                                              profits_model.income_tax, profits_model.owner_maintnance_costs,
+                                              profits_model.redemption_of_fixed_assets)
+        return netto_income, operating_expenses, supply_change, calculator
+
+    def __save_block_raport(self, time_period, fixed_assets, current_assets, equity, liabilities_provisions,
+                                other_liabilities, netto_income, operating_expanses, supply_change,
+                                calculator):
+        new_raport_block = models.FullRaportBlock()
+        username = self.request.user
+        identifier = self.proper_identifier + "." + str(time_period)
+        new_raport_block.save(user=username, time_period=time_period, identifier=identifier, fixed_assets=fixed_assets,
+                              current_assets=current_assets, equity=equity, liabilities_provisions=liabilities_provisions,
+                              other_liabilities=other_liabilities, profit_loses_calc=calculator, netto_income=netto_income,
+                              operating_expenses=operating_expanses, supply_change=supply_change)
+        return new_raport_block.id
+
+    def __generate_block_raport(self, assets, liabilities, profits_loses, num):
+        assets_instances = self.__assets_instances_generator(assets)
+        liabilities_instances = self.__liabilities_instances_generator(liabilities)
+        profits_loses_instances = self.__profits_loses_instances_generator(profits_loses)
+        return self.__save_block_raport( num + 1, assets_instances[0], assets_instances[1], liabilities_instances[0],
+                                  liabilities_instances[1], liabilities_instances[2], profits_loses_instances[0],
+                                  profits_loses_instances[1], profits_loses_instances[2], profits_loses_instances[3])
+
+    def get(self, request, *args, **kwargs):
+        if self.__check_raport_existance():
+            self.url = f'/raport/{self.existing_raport_id}'
+            return super(GenerateRaportView, self).get(request, *args, **kwargs)
+        else:
+            self.url = '/home'
+            self.proper_identifier = self.request.GET.get('identifier')
+            assets, liabilities, profits_loses = self.__get_wanted_queries()
+            for i in range(0, 7):
+                self.__generate_block_raport(assets[i], liabilities[i], profits_loses[i], i)
+            return super(GenerateRaportView, self).get(request, *args, **kwargs)
 
 

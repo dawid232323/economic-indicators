@@ -5,6 +5,7 @@ from economic_indicators_site.utils import assets, liabilities
 from economic_indicators_site.utils.functions import identify, clearify
 from economic_indicators_site.utils.profits_loses import NettoIncome, OperatingExpenses, SupplyChange, Calculator
 from economic_indicators_site.utils.raport_generator import RaportGenerator
+from django.core.validators import DecimalValidator
 
 
 TIME_PERIODS = {
@@ -98,6 +99,9 @@ class Assets(models.Model):
         clearify(Assets, self.identifier)
         return super(Assets, self).save(**kwargs)
 
+    def __str__(self):
+        return f'Assets with identifier {self.identifier}'
+
 
 class Liabilities(models.Model):
     created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
@@ -148,6 +152,9 @@ class Liabilities(models.Model):
         kwargs.__delitem__('time_period')
         clearify(Liabilities, self.identifier)
         return super(Liabilities, self).save(**kwargs)
+
+    def __str__(self):
+        return f'Liabilities with identifier {self.identifier}'
 
 
 class ProfitsLoses(models.Model):
@@ -212,6 +219,9 @@ class ProfitsLoses(models.Model):
             logged_user.num_of_reports += 1
         return super(ProfitsLoses, self).save(**kwargs)
 
+    def __str__(self):
+        return f'Profits loses with identifier {self.identifier}'
+
 
 class FullRaportBlock(models.Model):
     created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
@@ -234,7 +244,8 @@ class FullRaportBlock(models.Model):
         ordering = ['time_period']
 
     def save(self, **kwargs):
-        self.created_by = kwargs['user']
+        logged_user = CompanySystemUser.objects.get(user__username=kwargs['user'])
+        self.created_by = logged_user
         self.time_period = kwargs['time_period']
         self.identifier = kwargs['identifier']
         raport_generator = RaportGenerator(kwargs['fixed_assets'], kwargs['current_assets'], kwargs['equity'],
@@ -254,6 +265,9 @@ class FullRaportBlock(models.Model):
         self.profitability_of_revenue_ratio = raport_generator.calculate_profitability_of_revenue_ratio()
         self.debt_ratio = raport_generator.calculate_debt_ratio()
 
+        kwargs.__delitem__('user')
+        kwargs.__delitem__('time_period')
+        kwargs.__delitem__('identifier')
         kwargs.__delitem__('fixed_assets')
         kwargs.__delitem__('current_assets')
         kwargs.__delitem__('equity')
