@@ -5,6 +5,13 @@
         <h1>Hello {{ username }}</h1>
         <button class="btn btn-primary">Button</button>
         {{ form }}
+        {% if raports|length == 0 %}
+        <h3>Nie masz jeszcze żadnych raportów</h3>
+        {% else %}
+            {% for raport in raports %}
+                <h4><a href="/full_raport_view/?identifier={{ raport.identifier }}">{{ raport }}</a></h4>
+            {% endfor %}
+        {% endif %}
     {% endblock %}
 
 </body>

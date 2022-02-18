@@ -11,5 +11,6 @@ urlpatterns = [
     path('new_raport/add_assets/', views.AddNewAssetsView.as_view()),
     path('new_raport/add_liabilities/', views.AdddNewLiabilitiesView.as_view()),
     path('new_raport/add_profits_loses/', views.AddNewProfitsLosesView.as_view()),
-    path('generate_raport/', views.GenerateRaportView.as_view())
+    path('generate_raport/', views.GenerateRaportView.as_view()),
+    path('full_raport_view/', views.FullRaportView.as_view())
 ]

@@ -1,3 +1,6 @@
+import datetime
+
+import django.utils.timezone
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -217,6 +220,7 @@ class ProfitsLoses(models.Model):
         clearify(ProfitsLoses, self.identifier)
         if int(self.time_period) == 8:
             logged_user.num_of_reports += 1
+            logged_user.save()
         return super(ProfitsLoses, self).save(**kwargs)
 
     def __str__(self):
@@ -248,6 +252,7 @@ class FullRaportBlock(models.Model):
         self.created_by = logged_user
         self.time_period = kwargs['time_period']
         self.identifier = kwargs['identifier']
+        clearify(FullRaportBlock, self.identifier)
         raport_generator = RaportGenerator(kwargs['fixed_assets'], kwargs['current_assets'], kwargs['equity'],
                                            kwargs['liabilities_provisions'], kwargs['other_liabilities'],
                                            kwargs['profit_loses_calc'], kwargs['netto_income'], kwargs['operating_expenses'],
@@ -280,6 +285,9 @@ class FullRaportBlock(models.Model):
 
         return super(FullRaportBlock, self).save(**kwargs)
 
+    def __str__(self):
+        return f'Raport block with identifier {self.identifier}'
+
 
 #TODO
 # Supplement FullRaport model. One model should correspond to one time period.
@@ -289,5 +297,10 @@ class FullRaportBlock(models.Model):
 # RaportView should display these 8 given reports as table like in the excel example
 
 
-class FullRaport(models.Model):
-    pass
+class FinalRaport(models.Model):
+    created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
+    created_at = models.DateField(auto_now_add=True)
+    identifier = models.CharField(max_length=10, unique=True)
+
+    def __str__(self):
+        return f'Raport wygenerowany {self.created_at}'

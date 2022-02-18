@@ -98,7 +98,11 @@ class HomePageView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         current_system_user = models.CompanySystemUser.objects.get(user__username=self.request.user.username)
+        raports = models.FullRaportBlock.objects.filter(created_by=current_system_user)
         context['username'] = self.request.user.username
+        context['raports'] = models.FinalRaport.objects.filter(identifier__startswith=str(current_system_user.user.id))
+        context['user_id'] = int(current_system_user.user.id)
+        context['time_periods'] = TIME_PERIODS
         # context['raports'] = models.FullRaport.objects.filter(company_id=current_system_user.company.id)
         return context
 
@@ -257,8 +261,20 @@ class GenerateRaportView(LoginRequiredMixin, RedirectView):
             self.url = '/home'
             self.proper_identifier = self.request.GET.get('identifier')
             assets, liabilities, profits_loses = self.__get_wanted_queries()
-            for i in range(0, 7):
+            for i in range(0, 8):
                 self.__generate_block_raport(assets[i], liabilities[i], profits_loses[i], i)
+            new_full_raport = models.FinalRaport(created_by=models.CompanySystemUser.objects.get(user__username=request.user),
+                                                     identifier=self.proper_identifier)
+            new_full_raport.save()
             return super(GenerateRaportView, self).get(request, *args, **kwargs)
+
+class FullRaportView(TemplateView):
+    template_name = 'economic_indicators_site/fullRaportTemplate.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(FullRaportView, self).get_context_data(**kwargs)
+        identifier = self.request.GET.get('identifier')
+        context['raport_blocks'] = models.FullRaportBlock.objects.filter(identifier__contains=identifier)
+        return context
 
 

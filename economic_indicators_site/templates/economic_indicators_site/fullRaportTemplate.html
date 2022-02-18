@@ -1,0 +1,68 @@
+{% extends "economic_indicators_site/components/navigationBar.html" %}
+{% load widget_tweaks %}
+{% load humanize %}
+
+{% block content %}
+   <table>
+        <tr>
+            <th>
+                Okres Obrachunkowy
+            </th>
+            <th>
+               Relacja nadwyżek pieniężnych (zysku brutto Wb i amortyzacji Am, tj.net cash - flow) do zobowiązań krótko- i długo terminowych (kapitału obcego Kob)
+            </th>
+            <th>
+               Stosunek sumy bilansowej (aktywa A) do zobowiązań krótko- i długoterminowych Kob
+            </th>
+            <th>
+                Relacja wyniku finansowego brutto Wb do majątku A (zyskowność brutto majątku)
+            </th>
+            <th>
+                Relacja wyniku finansowego brutto Wb do sprzedaży O (rentowność brutto obrotów)
+            </th>
+            <th>
+                Relacja zapasów Zap do obrotów O
+            </th>
+            <th>
+                Relacja sprzedaży O do aktywów A (rotacja aktywów)
+            </th>
+            <th>
+                Ocena przedsiębiorstwa (W)
+            </th>
+            <th>
+                Podsumowanie oceny przedsiębiorstwa
+            </th>
+            <th>
+                Wskaźnik płynności
+            </th>
+            <th>
+                Wskaźnik rentowności majątku
+            </th>
+            <th>
+                Wskaźnik rentowności obrotu
+            </th>
+            <th>
+                Wskaźnik zadłużenia
+            </th>
+        </tr>
+        {% for raport_block in raport_blocks %}
+
+            <tr>
+                <th>{{ raport_block.time_period }}</th>
+                <td>{{ raport_block.money_surplus|floatformat:2 }}</td>
+                <td>{{ raport_block.bilans_sh_lil_ratio|floatformat:2 }}</td>
+                <td>{{ raport_block.financial_prop_score|floatformat:2 }}</td>
+                <td>{{ raport_block.financial_sc_sales_rel|floatformat:2 }}</td>
+                <td>{{ raport_block.supp_rev_relaton|floatformat:2 }}</td>
+                <td>{{ raport_block.assets_rotation|floatformat:2 }}</td>
+                <td>{{ raport_block.company_assessment|floatformat:2 }}</td>
+                <td>{{ raport_block.company_prediction }}</td>
+                <td>{{ raport_block.liquidity_ratio|floatformat:2 }}</td>
+                <td>{{ raport_block.return_on_assets_ratio|floatformat:2 }}</td>
+                <td>{{ raport_block.profitability_of_revenue_ratio|floatformat:2 }}</td>
+                <td>{{ raport_block.debt_ratio|floatformat:2 }}</td>
+            </tr>
+        {% endfor %}
+   </table>
+    <button>Pobierz Raport</button>
+{% endblock %}

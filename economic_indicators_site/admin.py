@@ -54,4 +54,9 @@ class CompanySystemUserAdmin(admin.ModelAdmin):
     list_filter = ('user', )
 
 
+@admin.register(models.FinalRaport)
+class ComanyFullRaportAdmin(admin.ModelAdmin):
+    list_filter = ('created_by', )
+
+
 # admin.site.register(CompanyAdmin)
