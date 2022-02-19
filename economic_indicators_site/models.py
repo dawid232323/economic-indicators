@@ -247,7 +247,7 @@ class FullRaportBlock(models.Model):
     class Meta:
         ordering = ['time_period']
 
-    def __dict__(self):
+    def get_serialised_data(self):
         return {
             'Relacja nadwyżek pieniężnych do zobowiązań krótko i długoterminowych': self.money_surplus,
             'Stosunek sumy bilansowej do zobowiązań krótko i długoterminowych': self.bilans_sh_lil_ratio,
