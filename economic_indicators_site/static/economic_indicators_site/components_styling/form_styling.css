@@ -1,0 +1,82 @@
+.form {
+    display: flex;
+    align-self: center;
+    flex-direction: column;
+    width: 500px;
+    padding: 20px;
+    -webkit-box-shadow: 0px 0px 11px -6px rgba(255, 0, 19, 1);
+    -moz-box-shadow: 0px 0px 11px -6px rgba(255, 0, 19, 1);
+    box-shadow: 0px 0px 11px -6px rgba(255, 0, 19, 1);
+}
+
+.form--maxWidth {
+    width: 1200px;
+}
+
+.form__singleInput {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form__header {
+    letter-spacing: 1px;
+    font-size: 25px;
+    padding-bottom: 10px;
+}
+
+.form__input {
+    font-size: 15px;
+    display: block;
+    width: 70%;
+    margin: 10px 0;
+    padding: 10px 15px;
+    transition: 0.3s;
+    outline: none;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+input:focus {
+    outline: none;
+    border: 1px solid red;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+.form__label {
+    padding: 10px 0;
+    font-size: 18px;
+    color: #363636;
+}
+
+.form__label--large {
+    font-size: 22px;
+}
+
+.form__button {
+    align-self: flex-end;
+    width: 50%;
+    padding: 15px 0;
+    margin: 20px 0;
+    border-radius: 5px;
+    background: linear-gradient(rgb(228, 4, 33) 0%, rgb(174, 14, 21) 100%);
+    border: 0;
+    color: white;
+    font-size: 17px;
+    transition: 0.3s;
+}
+
+button.form__button:hover {
+    background-color: rgba(0,0,0,0.5);
+    cursor: pointer;
+}
+
+.form__button--center {
+    align-self: center;
+}
+
+.form__error {
+    text-align: center;
+    color: red;
+}
