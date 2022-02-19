@@ -1,4 +1,4 @@
-ul  {
+.nav__content  {
     list-style-type: none;
     margin: 0 0 10px;
     padding: 0;
@@ -8,7 +8,7 @@ ul  {
     flex-direction: row;
 }
 
-li a {
+.nav__item a {
     display: block;
     color: white;
     text-align: center;
@@ -17,7 +17,7 @@ li a {
     transition: 0.3s;
 }
 
-li a:hover {
+.nav__item a:hover {
     background-color: rgba(0,0,0,0.3);
     cursor: pointer;
 }

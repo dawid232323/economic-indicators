@@ -11,14 +11,14 @@
     <title>Home Page</title>
 </head>
 <body class="main-body">
-    <nav class="nav-hbar-view">
-        <ul>
-            <li><a href="/home">Strona Domowa</a></li>
-            <li><a href="/new_raport/add_assets/?number=1">Stwórz Nowy Raport</a></li>
-            <li><a href="/logout">Wyloguj Się</a></li>
+    <nav class="nav">
+        <ul class="nav__content">
+            <li class="nav__item"><a href="/home">Strona Domowa</a></li>
+            <li class="nav__item"><a href="/new_raport/add_assets/?number=1">Stwórz Nowy Raport</a></li>
+            <li class="nav__item"><a href="/logout">Wyloguj Się</a></li>
         </ul>
     </nav>
-    <div class="main_conent">
+    <div class="main_content">
         {% block content %}
         {#    Here goes homePage text template#}
         {% endblock %}

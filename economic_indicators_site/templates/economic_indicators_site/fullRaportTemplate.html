@@ -3,16 +3,18 @@
 {% load humanize %}
 
 {% block content %}
-   <table>
+<table class="table">
+    <thead>
         <tr>
             <th>
                 Okres Obrachunkowy
             </th>
             <th>
-               Relacja nadwyżek pieniężnych (zysku brutto Wb i amortyzacji Am, tj.net cash - flow) do zobowiązań krótko- i długo terminowych (kapitału obcego Kob)
+                Relacja nadwyżek pieniężnych (zysku brutto Wb i amortyzacji Am, tj.net cash - flow) do zobowiązań
+                krótko- i długo terminowych (kapitału obcego Kob)
             </th>
             <th>
-               Stosunek sumy bilansowej (aktywa A) do zobowiązań krótko- i długoterminowych Kob
+                Stosunek sumy bilansowej (aktywa A) do zobowiązań krótko- i długoterminowych Kob
             </th>
             <th>
                 Relacja wyniku finansowego brutto Wb do majątku A (zyskowność brutto majątku)
@@ -45,24 +47,26 @@
                 Wskaźnik zadłużenia
             </th>
         </tr>
+    </thead>
+    <tbody>
         {% for raport_block in raport_blocks %}
-
-            <tr>
-                <th>{{ raport_block.time_period }}</th>
-                <td>{{ raport_block.money_surplus|floatformat:2 }}</td>
-                <td>{{ raport_block.bilans_sh_lil_ratio|floatformat:2 }}</td>
-                <td>{{ raport_block.financial_prop_score|floatformat:2 }}</td>
-                <td>{{ raport_block.financial_sc_sales_rel|floatformat:2 }}</td>
-                <td>{{ raport_block.supp_rev_relaton|floatformat:2 }}</td>
-                <td>{{ raport_block.assets_rotation|floatformat:2 }}</td>
-                <td>{{ raport_block.company_assessment|floatformat:2 }}</td>
-                <td>{{ raport_block.company_prediction }}</td>
-                <td>{{ raport_block.liquidity_ratio|floatformat:2 }}</td>
-                <td>{{ raport_block.return_on_assets_ratio|floatformat:2 }}</td>
-                <td>{{ raport_block.profitability_of_revenue_ratio|floatformat:2 }}</td>
-                <td>{{ raport_block.debt_ratio|floatformat:2 }}</td>
-            </tr>
+        <tr class="tableRow">
+            <th>{{ raport_block.time_period }}</th>
+            <td>{{ raport_block.money_surplus|floatformat:2 }}</td>
+            <td>{{ raport_block.bilans_sh_lil_ratio|floatformat:2 }}</td>
+            <td>{{ raport_block.financial_prop_score|floatformat:2 }}</td>
+            <td>{{ raport_block.financial_sc_sales_rel|floatformat:2 }}</td>
+            <td>{{ raport_block.supp_rev_relaton|floatformat:2 }}</td>
+            <td>{{ raport_block.assets_rotation|floatformat:2 }}</td>
+            <td>{{ raport_block.company_assessment|floatformat:2 }}</td>
+            <td>{{ raport_block.company_prediction }}</td>
+            <td>{{ raport_block.liquidity_ratio|floatformat:2 }}</td>
+            <td>{{ raport_block.return_on_assets_ratio|floatformat:2 }}</td>
+            <td>{{ raport_block.profitability_of_revenue_ratio|floatformat:2 }}</td>
+            <td>{{ raport_block.debt_ratio|floatformat:2 }}</td>
+        </tr>
         {% endfor %}
-   </table>
-    <button>Pobierz Raport</button>
+    </tbody>
+</table>
+<button class="form__button form__button--right">Pobierz Raport</button>
 {% endblock %}

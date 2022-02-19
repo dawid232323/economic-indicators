@@ -3,14 +3,20 @@
 <body>
     {% block content %}
         <h1>Hello {{ username }}</h1>
-        <button class="btn btn-primary">Button</button>
         {{ form }}
         {% if raports|length == 0 %}
-        <h3>Nie masz jeszcze żadnych raportów</h3>
+        <h2>Nie masz jeszcze żadnych raportów</h3>
         {% else %}
-            {% for raport in raports %}
-                <h4><a href="/full_raport_view/?identifier={{ raport.identifier }}">{{ raport }}</a></h4>
-            {% endfor %}
+            <h3 class="raportHeader">Lista twoich raportów: </h3>
+            <ul class="raportList">
+                {% for raport in raports %}
+                    <li class="raportList__text">
+                        <a href="/full_raport_view/?identifier={{ raport.identifier }}">
+                            {{ raport }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
         {% endif %}
     {% endblock %}
 

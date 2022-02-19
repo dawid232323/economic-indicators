@@ -2,9 +2,8 @@
 {% load widget_tweaks %}
 
 {% block content %}
-
-    <h2 class="form__header">{{ subject }}</h2>
     <form method="post" class="form form--maxWidth">
+        <h2 class="form__header">{{ subject }}</h2>
         {% csrf_token %}
         <div class="form__inputs">
             {% for item in form %}
