@@ -247,6 +247,22 @@ class FullRaportBlock(models.Model):
     class Meta:
         ordering = ['time_period']
 
+    def __dict__(self):
+        return {
+            'Relacja nadwyżek pieniężnych do zobowiązań krótko i długoterminowych': self.money_surplus,
+            'Stosunek sumy bilansowej do zobowiązań krótko i długoterminowych': self.bilans_sh_lil_ratio,
+            'Relacja wyniku finansowego brutto do majątku': self.financial_prop_score,
+            'Relacja wyniku finansowego brutto do sprzedaży': self.financial_sc_sales_rel,
+            'Relacja zapasów do obrotów': self.supp_rev_relaton,
+            'Relacja sprzedaży do aktywów': self.assets_rotation,
+            'Ocena przedsiębiorstwa': self.company_assessment,
+            'Opis oceny przedsiębiorstwa': self.company_prediction,
+            'Wskaźnik płynności': self.liquidity_ratio,
+            'Wskaźnik rentowności majątku': self.return_on_assets_ratio,
+            'Wskaźnik rentowności obrotu': self.profitability_of_revenue_ratio,
+            'Wskaźnik zadłużenia': self.debt_ratio
+        }
+
     def save(self, **kwargs):
         logged_user = CompanySystemUser.objects.get(user__username=kwargs['user'])
         self.created_by = logged_user
