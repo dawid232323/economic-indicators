@@ -11,7 +11,9 @@
                 {% render_field item class+="form__input" %}
             {% endfor %}
         </div>
-        <p class="form__error">Podałeś nieprawidłowe hasło </p>
-        <button type="submit" class="form__button">Zaloguj się</button>
+        <div class="form__divider">
+            <a href="/register" class="form__registerText">Nie masz konta? <br />Zarejestruj Się</a>
+            <button type="submit" class="form__button">Zaloguj się</button>
+        </div>
     </form>
 {% endblock %}

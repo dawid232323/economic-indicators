@@ -13,9 +13,61 @@ body.main-body {
 }
 
 div.main_content {
-    margin: 30px;
+    margin: 50px;
+    display: flex;
+    flex-direction: column;
 }
 
 h1 {
     color: darkred;
+}
+
+.raportHeader {
+    padding: 10px 0;
+    font-size: 35px;
+}
+
+.raportList{
+    list-style: decimal;
+    padding-left: 20px;
+}
+
+.raportList__text > a {
+    text-decoration: none;
+    color: darkred;
+    font-size: 20px;
+    transition: 0.3s;
+    padding: 5px;
+}
+
+.raportList__text > a:hover {
+    cursor: pointer;
+    color: red;
+}
+
+
+.table {
+    color: #363636;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.table thead {
+    border-bottom: 2px solid rgb(219, 219, 219);
+    font-weight: 700;
+}
+
+
+.tableRow:nth-child(even) {
+    background-color: rgb(219, 219, 219);
+}
+.tableRow {
+    transition: 0.2s;
+}
+.tableRow:hover {
+    background-color:rgb(219, 219, 219);
+}
+.tableRow > td,th {
+    padding: 20px 5px;
+    border: 1px solid gray;
 }
