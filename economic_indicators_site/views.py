@@ -274,7 +274,7 @@ class FullRaportView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(FullRaportView, self).get_context_data(**kwargs)
         identifier = self.request.GET.get('identifier')
-        context['raport_blocks'] = models.FullRaportBlock.objects.filter(identifier__contains=identifier)
+        context['raport_blocks'] = models.FullRaportBlock.objects.filter(identifier__contains=identifier).all()
         return context
 
 
