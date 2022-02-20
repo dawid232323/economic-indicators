@@ -1,17 +1,20 @@
 from django.views.generic.base import RedirectView
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.views import LoginView, LogoutView, TemplateView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect, HttpResponse, FileResponse
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, FormView
 from django.contrib.auth.models import User
+from django.views.generic import View
 
 from . import forms
 from . import models
-from .utils import assets, liabilities, profits_loses
+from .utils.raport_components import profits_loses, assets, liabilities
+from .utils.generators.to_pdf_model_generator import ReportPDFGenerator
+
+import mimetypes
 
 TIME_PERIODS = {
     1: "Poprzedni okres obrachunkowy (x-3)",
@@ -71,12 +74,8 @@ class AddCompanySystemUserView(LoginRequiredMixin, CreateView):
 # Add custom error page that will tell the user that he cannot choose anyone but himself
     def form_valid(self, form):
         username = str(self.request.GET.get('username'))
-        current_user = User.objects.get(username=username).username.replace(' ', '')
-        cleaned_username = str(form.cleaned_data['user']).replace(' ', '')
-        if cleaned_username != current_user:
-            raise Exception
-        else:
-            return super(AddCompanySystemUserView, self).form_valid(form)
+        form.cleaned_data['user'] = self.request.GET.get('username')
+        return super(AddCompanySystemUserView, self).form_valid(form)
 
 
 class RegisterNewUserView(SuccessMessageMixin, CreateView):
@@ -235,14 +234,14 @@ class GenerateRaportView(LoginRequiredMixin, RedirectView):
 
     def __save_block_raport(self, time_period, fixed_assets, current_assets, equity, liabilities_provisions,
                                 other_liabilities, netto_income, operating_expanses, supply_change,
-                                calculator):
+                                calculator, for_year):
         new_raport_block = models.FullRaportBlock()
         username = self.request.user
         identifier = self.proper_identifier + "." + str(time_period)
         new_raport_block.save(user=username, time_period=time_period, identifier=identifier, fixed_assets=fixed_assets,
                               current_assets=current_assets, equity=equity, liabilities_provisions=liabilities_provisions,
                               other_liabilities=other_liabilities, profit_loses_calc=calculator, netto_income=netto_income,
-                              operating_expenses=operating_expanses, supply_change=supply_change)
+                              operating_expenses=operating_expanses, supply_change=supply_change, for_year=for_year)
         return new_raport_block.id
 
     def __generate_block_raport(self, assets, liabilities, profits_loses, num):
@@ -251,7 +250,7 @@ class GenerateRaportView(LoginRequiredMixin, RedirectView):
         profits_loses_instances = self.__profits_loses_instances_generator(profits_loses)
         return self.__save_block_raport( num + 1, assets_instances[0], assets_instances[1], liabilities_instances[0],
                                   liabilities_instances[1], liabilities_instances[2], profits_loses_instances[0],
-                                  profits_loses_instances[1], profits_loses_instances[2], profits_loses_instances[3])
+                                  profits_loses_instances[1], profits_loses_instances[2], profits_loses_instances[3], assets.created_at)
 
     def get(self, request, *args, **kwargs):
         if self.__check_raport_existance():
@@ -275,6 +274,27 @@ class FullRaportView(TemplateView):
         context = super(FullRaportView, self).get_context_data(**kwargs)
         identifier = self.request.GET.get('identifier')
         context['raport_blocks'] = models.FullRaportBlock.objects.filter(identifier__contains=identifier).all()
+        context['id'] = identifier
         return context
 
+class GenerateRaportFileView(LoginRequiredMixin, View):
+    url = '/home'
+    login_url = '/login'
+
+    def __check_file_existance(self, id):
+        file = None
+        try:
+            file = models.RaportFileModel.objects.get(identifier=id)
+            return file
+        except:
+            query = models.FullRaportBlock.objects.filter(identifier__contains=self.request.GET.get('identifier'))
+            file_name = ReportPDFGenerator(query, id, self.request.user).generate()
+            new_file_model = models.RaportFileModel(identifier=id, file_path=file_name)
+            new_file_model.save()
+            return new_file_model
+
+    def get(self, request, *args, **kwargs):
+        file_name = self.__check_file_existance(request.GET.get('identifier'))
+        response = FileResponse(open(file_name.file_path, 'rb'))
+        return response
 

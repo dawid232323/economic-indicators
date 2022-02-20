@@ -59,4 +59,9 @@ class ComanyFullRaportAdmin(admin.ModelAdmin):
     list_filter = ('created_by', )
 
 
+@admin.register(models.RaportFileModel)
+class ComanyFullRaportAdmin(admin.ModelAdmin):
+    list_filter = ('identifier', )
+
+
 # admin.site.register(CompanyAdmin)

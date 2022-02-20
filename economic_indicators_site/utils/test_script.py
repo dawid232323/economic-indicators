@@ -1,7 +1,4 @@
-import assets
-import liabilities
-import profits_loses
-import raport_generator
+from economic_indicators_site.utils.raport_components import profits_loses, assets, liabilities, raport_generator
 
 fixed_assets = assets.FixedAssets(0, 0, 0, 20.38, 20.91)
 current_assets = assets.CurrentAssets(0, 0, 0, 657.71, 0, 0, 0, 428.28, 0)
@@ -11,7 +8,7 @@ other_liabilities = liabilities.OtherLiabilities(0, 0)
 netto_income = profits_loses.NettoIncome(0, 4622.97, 0, 3.80, 0)
 operating_expenses = profits_loses.OperatingExpenses(92.36, 3128.12, 3.61, 0, 312.29, 0, 0, 779.26, 0)
 supply_change = profits_loses.SupplyChange(0, 0)
-calculator = profits_loses.Calculator(netto_income, operating_expenses,supply_change,
+calculator = profits_loses.Calculator(netto_income, operating_expenses, supply_change,
                                       54.57, 120, 0)
 generator = raport_generator.RaportGenerator(fixed_assets, current_assets, equity, liabilities_provisions,
                                              other_liabilities, calculator, netto_income, operating_expenses,

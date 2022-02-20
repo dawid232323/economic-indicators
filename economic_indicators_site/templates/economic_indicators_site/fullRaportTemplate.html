@@ -51,7 +51,7 @@
     <tbody>
         {% for raport_block in raport_blocks %}
         <tr class="tableRow">
-            <th>{{ raport_block.time_period }}</th>
+            <th>{{ raport_block.created_at }}</th>
             <td>{{ raport_block.money_surplus|floatformat:2 }}</td>
             <td>{{ raport_block.bilans_sh_lil_ratio|floatformat:2 }}</td>
             <td>{{ raport_block.financial_prop_score|floatformat:2 }}</td>
@@ -68,5 +68,5 @@
         {% endfor %}
     </tbody>
 </table>
-<button class="form__button form__button--right">Pobierz Raport</button>
+<button class="form__button form__button--right"><a href="/generate_raport_file/?identifier={{ id }}">Pobierz Raport</a></button>
 {% endblock %}

@@ -1,15 +1,12 @@
-import datetime
-
-import django.utils.timezone
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.contrib.auth.models import User
 
-from economic_indicators_site.utils import assets, liabilities
-from economic_indicators_site.utils.functions import identify, clearify
-from economic_indicators_site.utils.profits_loses import NettoIncome, OperatingExpenses, SupplyChange, Calculator
-from economic_indicators_site.utils.raport_generator import RaportGenerator
-from django.core.validators import DecimalValidator
-
+from economic_indicators_site.utils.raport_components import assets, liabilities
+from economic_indicators_site.utils.raport_components.functions import identify, clearify
+from economic_indicators_site.utils.raport_components.profits_loses import NettoIncome, OperatingExpenses, SupplyChange, Calculator
+from economic_indicators_site.utils.raport_components.raport_generator import RaportGenerator
+from economic_indicators_site.utils.year_validators import max_value_current_year
 
 TIME_PERIODS = {
     1: "Poprzedni okres obrachunkowy (x-3)",
@@ -44,6 +41,13 @@ class CompanySystemUser(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     num_of_reports = models.IntegerField(null=False, default=0)
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None, **kwargs):
+        logged_user = User.objects.get(username=kwargs['user'])
+        self.user = logged_user
+        kwargs.__delitem__('user')
+        return super(CompanySystemUser, self).save(**kwargs)
+
     def __str__(self):
         return self.user.username
 
@@ -54,6 +58,7 @@ class CompanySystemUser(models.Model):
 
 class Assets(models.Model):
     created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
+    created_at = models.IntegerField(default=2022, validators=[MinValueValidator(2010), max_value_current_year])
     time_period = models.IntegerField()
     identifier = models.CharField(max_length=20, db_index=True)
     intangible_fixed_assets = models.FloatField(default=0)
@@ -220,7 +225,7 @@ class ProfitsLoses(models.Model):
         clearify(ProfitsLoses, self.identifier)
         if int(self.time_period) == 8:
             logged_user.num_of_reports += 1
-            logged_user.save()
+            logged_user.save(user=logged_user.user.username)
         return super(ProfitsLoses, self).save(**kwargs)
 
     def __str__(self):
@@ -229,6 +234,7 @@ class ProfitsLoses(models.Model):
 
 class FullRaportBlock(models.Model):
     created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
+    created_at = models.IntegerField(default=2022)
     time_period = models.IntegerField()
     identifier = models.CharField(max_length=10, db_index=True, null=False)
     money_surplus = models.FloatField(default=0)
@@ -249,18 +255,19 @@ class FullRaportBlock(models.Model):
 
     def get_serialised_data(self):
         return {
-            'Relacja nadwyżek pieniężnych do zobowiązań krótko i długoterminowych': self.money_surplus,
-            'Stosunek sumy bilansowej do zobowiązań krótko i długoterminowych': self.bilans_sh_lil_ratio,
-            'Relacja wyniku finansowego brutto do majątku': self.financial_prop_score,
-            'Relacja wyniku finansowego brutto do sprzedaży': self.financial_sc_sales_rel,
-            'Relacja zapasów do obrotów': self.supp_rev_relaton,
-            'Relacja sprzedaży do aktywów': self.assets_rotation,
-            'Ocena przedsiębiorstwa': self.company_assessment,
+            'Okres obrachunkowy': self.created_at,
+            'Relacja nadwyżek pieniężnych do zobowiązań krótko i długoterminowych': "{:.2f}".format(self.money_surplus),
+            'Stosunek sumy bilansowej do zobowiązań krótko i długoterminowych': "{:.2f}".format(self.bilans_sh_lil_ratio),
+            'Relacja wyniku finansowego brutto do majątku': "{:.2f}".format(self.financial_prop_score),
+            'Relacja wyniku finansowego brutto do sprzedaży': "{:.2f}".format(self.financial_sc_sales_rel),
+            'Relacja zapasów do obrotów': "{:.2f}".format(self.supp_rev_relaton),
+            'Relacja sprzedaży do aktywów': "{:.2f}".format(self.assets_rotation),
+            'Ocena przedsiębiorstwa': "{:.2f}".format(self.company_assessment),
             'Opis oceny przedsiębiorstwa': self.company_prediction,
-            'Wskaźnik płynności': self.liquidity_ratio,
-            'Wskaźnik rentowności majątku': self.return_on_assets_ratio,
-            'Wskaźnik rentowności obrotu': self.profitability_of_revenue_ratio,
-            'Wskaźnik zadłużenia': self.debt_ratio
+            'Wskaźnik płynności': "{:.2f}".format(self.liquidity_ratio),
+            'Wskaźnik rentowności majątku': "{:.2%}".format(self.return_on_assets_ratio),
+            'Wskaźnik rentowności obrotu': "{:.2%}".format(self.profitability_of_revenue_ratio),
+            'Wskaźnik zadłużenia': "{:.2f}".format(self.debt_ratio)
         }
 
     def save(self, **kwargs):
@@ -268,6 +275,7 @@ class FullRaportBlock(models.Model):
         self.created_by = logged_user
         self.time_period = kwargs['time_period']
         self.identifier = kwargs['identifier']
+        self.created_at = kwargs['for_year']
         clearify(FullRaportBlock, self.identifier)
         raport_generator = RaportGenerator(kwargs['fixed_assets'], kwargs['current_assets'], kwargs['equity'],
                                            kwargs['liabilities_provisions'], kwargs['other_liabilities'],
@@ -298,6 +306,7 @@ class FullRaportBlock(models.Model):
         kwargs.__delitem__('netto_income')
         kwargs.__delitem__('operating_expenses')
         kwargs.__delitem__('supply_change')
+        kwargs.__delitem__('for_year')
 
         return super(FullRaportBlock, self).save(**kwargs)
 
@@ -318,5 +327,17 @@ class FinalRaport(models.Model):
     created_at = models.DateField(auto_now_add=True)
     identifier = models.CharField(max_length=10, unique=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
         return f'Raport wygenerowany {self.created_at}'
+
+
+class RaportFileModel(models.Model):
+    identifier = models.CharField(max_length=10, unique=True)
+    file_path = models.FilePathField()
+
+    def __str__(self):
+        return f'Raport {self.identifier}'
+

@@ -1,6 +1,4 @@
-from . import assets
-from . import liabilities
-from . import profits_loses
+from economic_indicators_site.utils.raport_components import profits_loses, assets, liabilities
 
 
 class RaportGenerator:
