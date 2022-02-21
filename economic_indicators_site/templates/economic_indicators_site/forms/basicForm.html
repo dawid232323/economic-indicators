@@ -2,20 +2,22 @@
 {% load widget_tweaks %}
 
 {% block content %}
-    <form method="post" class="form form--maxWidth">
-        <h2 class="form__header">{{ subject }}</h2>
-        {% csrf_token %}
-        <div class="form__inputs">
-            {% for item in form %}
-                    <div class="form__singleInput">
-                        <label class="form__label form__label--large">
-                            {{ item.label_tag }}
-                        </label>
-                        {% render_field item class+="form__input" %}
-{#                        TODO Error list #}
-                    </div>
-            {% endfor %}
+<form method="post" class="form form--maxWidth">
+    <h2 class="form__header">{{ subject }}</h2>
+    {% csrf_token %}
+    <div class="form__inputs">
+        {% for item in form %}
+        <div class="form__singleInput">
+            <div class="form__row">
+                <label class="form__label form__label--large">
+                    {{ item.label_tag }}
+                </label>
+                {% render_field item class+="form__input" %}
+            </div>
+            <p class="form__error">{{ item.errors.as_text }}</p>
         </div>
-        <button type="submit" class="form__button form__button--center">Następna strona</button>
-    </form>
+        {% endfor %}
+    </div>
+    <button type="submit" class="form__button form__button--center">Następna strona</button>
+</form>
 {% endblock %}

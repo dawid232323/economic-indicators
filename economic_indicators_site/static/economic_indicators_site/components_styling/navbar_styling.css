@@ -21,3 +21,9 @@
     background-color: rgba(0,0,0,0.3);
     cursor: pointer;
 }
+
+.nav--bar {
+    width: 100vw;
+    height: 50px;
+    background:linear-gradient(rgb(228, 4, 33) 0%, rgb(174, 14, 21) 100%);
+}
