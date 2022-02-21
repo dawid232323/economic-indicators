@@ -1,17 +1,34 @@
-{% extends "economic_indicators_site/components/navigationBar.html" %}
+{% load static %}
 {% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-    <form method="post" class="form">
-        {% csrf_token %}
-        <h2 class="form__header">Rejestracja do serwisu</h2>
-        <div class="form__inputs">
-            {% for item in form %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'economic_indicators_site/main_styling.css' %}">
+    <link rel="stylesheet" href="{% static 'economic_indicators_site/components_styling/navbar_styling.css' %}">
+    <link rel="stylesheet" href="{% static 'economic_indicators_site/components_styling/form_styling.css' %}">
+    <title>Home Page</title>
+</head>
+
+<body class="main-body">
+    <nav class="nav--bar">
+    </nav>
+    <div class="main_content">
+        <form method="post" class="form">
+            {% csrf_token %}
+            <h2 class="form__header">Rejestracja do serwisu</h2>
+            <div class="form__inputs">
+                {% for item in form %}
                 {{ item.label_tag }}
                 {% render_field item class+="form__input" %}
-            {% endfor %}
-        </div>
-        <p class="form__error">{{ forms.errors }}</p>
-        <button type="submit" class="form__button">Zaloguj się</button>
-    </form>
-{% endblock %}
+                {% endfor %}
+            </div>
+            <p class="form__error">{{ forms.errors }}</p>
+            <button type="submit" class="form__button">Zaloguj się</button>
+        </form>
+    </div>
+</body>
+
+</html>
