@@ -616,3 +616,58 @@ class FullMarketAnalysisModel(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+
+class ThirdModuleMainComponentModel(models.Model):
+    created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
+    identifier = models.CharField(max_length=10)
+    name = models.CharField(max_length=20)
+    type = models.IntegerField()
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None, **kwargs):
+        logged_user = CompanySystemUser.objects.get(user__username=kwargs['user'])
+        self.created_by = logged_user
+        self.identifier = identify(logged_user.user_id, logged_user.third_module_raports, self.type)
+        clearify(ThirdModuleMainComponentModel, self.identifier)
+        kwargs.__delitem__('user')
+        return super(ThirdModuleMainComponentModel, self).save(**kwargs)
+
+    def __str__(self):
+        return self.name
+
+    def get_serialised_data(self):
+        corresponding_tables = ThirdModuleTableComponentModel.objects.filter(main_component=self)
+        result = []
+        for table in corresponding_tables:
+            temp = {
+                "Czynność": table.activity,
+                "Jednostka": table.unit,
+                "Czas Trwania": table.duration
+            }
+            result.append(temp)
+        return result
+
+    class Meta:
+        ordering = ['-type']
+
+
+class ThirdModuleTableComponentModel(models.Model):
+
+    TIME_UNITS = [
+        ('h', 'Godzina'),
+        ('d', 'Dzień'),
+        ('w', 'Tydzień'),
+        ('m', 'Miesiąc')
+    ]
+
+    main_component = models.ForeignKey(ThirdModuleMainComponentModel, on_delete=models.CASCADE)
+    activity = models.CharField(max_length=200)
+    unit = models.CharField(max_length=10, choices=TIME_UNITS)
+    duration = models.IntegerField()
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None, **kwargs):
+        self.main_component = kwargs['component']
+        kwargs.__delitem__('component')
+        return super(ThirdModuleTableComponentModel, self).save(**kwargs)
+

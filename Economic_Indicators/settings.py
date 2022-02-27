@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.1.174', '127.0.0.1']
 
+DATE_FORMAT = 'd-m-Y'
+USE_L10N = False
 
 # Application definition
 

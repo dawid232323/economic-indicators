@@ -392,3 +392,36 @@ class GenerateMarketAnalysisFileView(LoginRequiredMixin, View):
         return FileResponse(open(object.file_path, 'rb'))
 
 
+class ThirdModuleBaseView(LoginRequiredMixin, FormView):
+    form_class = forms.AddNewThirdModuleTableForm
+    template_name = 'economic_indicators_site/forms/ThirdModuleForm.html'
+    login_url = '/login'
+    base_url = ''
+
+    def get_context_data(self, **kwargs):
+        context = super(ThirdModuleBaseView, self).get_context_data(**kwargs)
+        if 'rep' in self.request.GET:
+            context['is_repetitive'] = True
+        else:
+            context['is_repetitive'] = False
+        return context
+
+    def form_valid(self, form):
+        if 'comp_id' in self.request.GET:
+            form.cleaned_data['component'] = self.request.GET.get('comp_id')
+            self.success_url = f'{self.base_url}?comp_id={self.request.GET.get("comp_id")}&rep=1'
+        else:
+            new_instance = models.ThirdModuleMainComponentModel(name='Czas wprowadzenia nowości na rynek', type=1)
+            new_instance.save(user=self.request.user)
+            form.cleaned_data['component'] = new_instance.id
+            self.success_url = f'{self.base_url}?comp_id={new_instance.id}&rep=1'
+        return super(ThirdModuleBaseView, self).form_valid(form)
+
+class AddA1ThirdModuleView(ThirdModuleBaseView):
+    base_url = '/add_third_a1/'
+
+
+
+
+
+

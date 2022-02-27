@@ -214,3 +214,15 @@ class AddNewCurrentPlaceOnMarketForm(ModelForm):
     class Meta:
         model = models.CurrentPlaceOnTheMarketModel
         exclude = ['created_by', 'identifier']
+
+
+class AddNewThirdModuleTableForm(ModelForm):
+
+    def save(self, commit=True):
+        component = models.ThirdModuleMainComponentModel.objects.get(pk=int(self.cleaned_data.get('id')))
+        self.instance.save(component=component)
+        return self.instance
+
+    class Meta:
+        model = models.ThirdModuleTableComponentModel
+        exclude = ['main_component']
