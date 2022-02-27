@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Raport Analizy Rynkowej</title>
+</head>
+<body>
+    <h3>Charakterystyka Przedsiębiorstwa</h3>
+    {{ company_characteristic }}
+    <br/>
+    <h3>Rodzaj Działalności Gospodarczej Przedsiębiorstwa</h3>
+    {{ a2_table }}
+    <br/>
+    <h3>Oferta wnioskodawcy i przychody z działalności za dobra oferowane obecnie</h3>
+    {{ a3_now_table }}
+    <br/>
+    <h3>Oferta wnioskodawcy i przychody z działalności za dobra, które przestały być oferowane</h3>
+    {{ a3_stopped_table }}
+    <br/>
+    <h3>Obecne Miejsce na rynku</h3>
+    <br/>
+    <h4>Udział poszczególnych odbiorców w przychodach ze sprzedaży</h4>
+    {{ a4_receivers_table }}
+    <br/>
+    {{ a4_needs_table }}
+    <br/>
+    {{ a4_opportunities_table }}
+    <br/>
+    {{ a4_concurency_table }}
+    <br/>
+    {{ a4_advantages_table }}
+</body>
+</html>

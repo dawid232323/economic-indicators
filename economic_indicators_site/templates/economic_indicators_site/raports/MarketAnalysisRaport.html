@@ -1,0 +1,181 @@
+{% extends "economic_indicators_site/components/navigationBar.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <h3 class="raportHeader">Charakterystyka Przedsiębiorstwa</h3>
+    <table class="table">
+        <thead>
+            <th>Data Rozpoczęcia Działalności</th>
+            <th>Historia i Przedmiot Działalności</th>
+        </thead>
+        <tbody>
+            <tr class="tableRow">
+                <td>{{ business_characteristics.business_start_date }}</td>
+                <td>{{ business_characteristics.story_subject_business }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <h3 class="raportHeader">Rodzaj Działalności Gospodarczej Przedsiębiorstwa</h3>
+    <table class="table">
+        <thead>
+            <th>Działalność główna, w ramach projektu, pozostała</th>
+            <th>Charakterystyka</th>
+            <th>Udział % w ostatnim roku obrotowym w ogólnej wartości przychodów ze sprzedaży</th>
+            <th>Udział % pracujących w ogólnej liczbie pracujących</th>
+        </thead>
+        <tbody>
+            <tr class="tableRow">
+                <td>{{ economic_activity.main_operation1 }}</td>
+                <td>{{ economic_activity.main_operation1_characteristics }}</td>
+                <td>{{ economic_activity.main_operation1_cell1 }}</td>
+                <td>{{ economic_activity.main_operation1_cell2 }}</td>
+            </tr>
+            <tr class="tableRow">
+                <td>{{ economic_activity.main_operation2 }}</td>
+                <td>{{ economic_activity.main_operation2_characteristics }}</td>
+                <td>{{ economic_activity.main_operation2_cell1 }}</td>
+                <td>{{ economic_activity.main_operation2_cell2 }}</td>
+            </tr>
+            <tr class="tableRow">
+                <td>{{ economic_activity.main_operation3 }}</td>
+                <td>{{ economic_activity.main_operation3_characteristics }}</td>
+                <td>{{ economic_activity.main_operation3_cell1 }}</td>
+                <td>{{ economic_activity.main_operation3_cell2 }}</td>
+            </tr>
+            <tr class="tableRow">
+                <td>{{ economic_activity.main_operation4 }}</td>
+                <td>{{ economic_activity.main_operation4_characteristics }}</td>
+                <td>{{ economic_activity.main_operation4_cell1 }}</td>
+                <td>{{ economic_activity.main_operation4_cell2 }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <h3 class="raportHeader">Oferta Wnioskodawcy i Przychody z Działalności</h3>
+    <table class="table">
+        <thead>
+            <th>Produkt/Towar/Usługa</th>
+            <th>Wartość przychodów w zł za przedostatni rok obrotowy</th>
+            <th>Wartość przychodów w zł za ostatni zamknięty rok obrotowy</th>
+            <th>Wartość przychodów w zł za okres bieżący</th>
+            <th>Uwagi</th>
+        </thead>
+        <tbody>
+            <tr class="tableRow">
+                <td>{{ applicant_offer.goods_offered_now1 }}</td>
+                <td>{{ applicant_offer.income_current_year_now1 }}</td>
+                <td>{{ applicant_offer.income_last_year_now1 }}</td>
+                <td>{{ applicant_offer.income_current_year_now1 }}</td>
+                <td>{{ applicant_offer.notes1 }}</td>
+            </tr>
+            <tr class="tableRow">
+                    <td>{{ applicant_offer.goods_offered_now2 }}</td>
+                    <td>{{ applicant_offer.income_current_year_now2 }}</td>
+                    <td>{{ applicant_offer.income_last_year_now2 }}</td>
+                    <td>{{ applicant_offer.income_current_year_now2 }}</td>
+                    <td>{{ applicant_offer.notes2 }}</td>
+                </tr>
+            <tr class="tableRow">
+                <td>{{ applicant_offer.goods_offered_now3 }}</td>
+                <td>{{ applicant_offer.income_current_year_now3 }}</td>
+                <td>{{ applicant_offer.income_last_year_now3 }}</td>
+                <td>{{ applicant_offer.income_current_year_now3 }}</td>
+                <td>{{ applicant_offer.notes3 }}</td>
+            </tr>
+            <tr class="tableRow">
+                <td>{{ applicant_offer.goods_stopped1 }}</td>
+                <td>{{ applicant_offer.income_current_year_stopped1 }}</td>
+                <td>{{ applicant_offer.income_last_year_stopped1 }}</td>
+                <td>{{ applicant_offer.income_current_year_stopped1 }}</td>
+                <td>{{ applicant_offer.stopped_notes1 }}</td>
+            </tr>
+            <tr class="tableRow">
+                <td>{{ applicant_offer.goods_stopped2 }}</td>
+                <td>{{ applicant_offer.income_current_year_stopped2 }}</td>
+                <td>{{ applicant_offer.income_last_year_stopped2 }}</td>
+                <td>{{ applicant_offer.income_current_year_stopped2 }}</td>
+                <td>{{ applicant_offer.stopped_notes2 }}</td>
+            </tr>
+            <tr class="tableRow">
+                <td>{{ applicant_offer.goods_stopped3 }}</td>
+                <td>{{ applicant_offer.income_current_year_stopped3 }}</td>
+                <td>{{ applicant_offer.income_last_year_stopped3 }}</td>
+                <td>{{ applicant_offer.income_current_year_stopped3 }}</td>
+                <td>{{ applicant_offer.stopped_notes3 }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <h3 class="raportHeader">Obecne Miejsce na Rynku</h3>
+    <table class="table">
+        <h4>Udział poszczególnych odbiorców w przychodach ze sprzedaży</h4>
+        <thead>
+            <th>Odbiorca</th>
+            <th>% udział w przychodach ze sprzeday</th>
+        </thead>
+        <tbody>
+            <tr class="tableRow">
+                <td>{{ place_on_market.receiver1 }}</td>
+                <td>{{ place_on_market.receiver1_share }}</td>
+            </tr>
+            <tr class="tableRow">
+                <td>{{ place_on_market.receiver2 }}</td>
+                <td>{{ place_on_market.receiver2_share }}</td>
+            </tr>
+            <tr class="tableRow">
+                <td>{{ place_on_market.receiver3 }}</td>
+                <td>{{ place_on_market.receiver3_share }}</td>
+            </tr>
+            <tr class="tableRow">
+                <td>{{ place_on_market.receiver4 }}</td>
+                <td>{{ place_on_market.receiver4_share }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table class="table">
+        <thead>
+            <th>Oczekiwania i potrzeby klientów</th>
+        </thead>
+        <tbody>
+            <tr class="tableRow">
+                <td>{{ place_on_market.clients_needs_expectations }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table class="table">
+        <thead>
+            <th>Możliwości rozwojowe przedsiębiorstwa</th>
+        </thead>
+        <tbody>
+            <tr class="tableRow">
+                <td>{{ place_on_market.company_growth_possibilities }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table class="table">
+        <thead>
+            <th>Konkurencja przedsiębiorstwa</th>
+        </thead>
+        <tbody>
+            <tr class="tableRow">
+                <td>{{ place_on_market.company_concurency }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table class="table">
+        <thead>
+            <th>Przewagi konkurencyjne przedsiębiorstwa</th>
+        </thead>
+        <tbody>
+            <tr class="tableRow">
+                <td>{{ place_on_market.company_competitive_advantages }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <button class="form__button form__button--center"><a href="/generate_market_analysis/{{ id }}">Pobierz Raport</a></button>
+{% endblock %}

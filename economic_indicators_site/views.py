@@ -100,7 +100,7 @@ class HomePageView(LoginRequiredMixin, TemplateView):
         raports = models.FullRaportBlock.objects.filter(created_by=current_system_user)
         context['username'] = self.request.user.username
         context['raports'] = models.FinalRaport.objects.filter(identifier__startswith=str(current_system_user.user.id))
-        context['market_analysis'] = models.FullMarketAnalisisModel.objects.filter(identifier__startswith=str(current_system_user.user_id))
+        context['market_analysis'] = models.FullMarketAnalysisModel.objects.filter(identifier__startswith=str(current_system_user.user_id))
         context['internal_proceses'] = None
         context['user_id'] = int(current_system_user.user.id)
         context['time_periods'] = TIME_PERIODS
@@ -290,7 +290,7 @@ class GenerateRaportFileView(LoginRequiredMixin, View):
             return file
         except:
             query = models.FullRaportBlock.objects.filter(identifier__contains=self.request.GET.get('identifier'))
-            file_name = ReportPDFGenerator(query, id, self.request.user).generate()
+            file_name = ReportPDFGenerator(query, f'analiza_finansowa_{id}', self.request.user).generate()
             new_file_model = models.RaportFileModel(identifier=id, file_path=file_name)
             new_file_model.save()
             return new_file_model
@@ -314,7 +314,7 @@ class AddNewSecondModuleRaportBlockView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super(AddNewSecondModuleRaportBlockView, self).get_context_data()
-        context['title'] = self.title
+        context['subject'] = self.title
         context['form'] = self.form_class
         return context
 
@@ -345,20 +345,50 @@ class CurrentPlaceOnTheMarketView(AddNewSecondModuleRaportBlockView):
 
 class GenerateMarketAnalysisRaport(LoginRequiredMixin, RedirectView):
     login_url = '/login'
-    url = 'market_analysis/'
+    url = 'home/'
 
     def get(self, request, *args, **kwargs):
         current_user = models.CompanySystemUser.objects.get(user__username=request.user)
         temp_identifier = functions.identify(current_user.user_id, current_user.second_module_raports, 0)
-        functions.clearify(models.FullMarketAnalisisModel, temp_identifier)
-        new_instance = models.FullMarketAnalisisModel()
+        functions.clearify(models.FullMarketAnalysisModel, temp_identifier)
+        print(temp_identifier)
+        new_instance = models.FullMarketAnalysisModel()
         new_instance.save(user=request.user)
-        self.url = self.url + str(new_instance.id)
         return super(GenerateMarketAnalysisRaport, self).get(request)
 
 
-class MarketAnalysisView(TemplateView):
-    pass
+class MarketAnalysisView(LoginRequiredMixin, TemplateView):
+    template_name = 'economic_indicators_site/raports/MarketAnalysisRaport.html'
+    login_url = '/login'
+    analysis_model: models.FullMarketAnalysisModel = None
 
+    def get_context_data(self, **kwargs):
+        context = super(MarketAnalysisView, self).get_context_data()
+        if self.analysis_model is not None:
+            context['id'] = self.analysis_model.id
+            context['business_characteristics'] = self.analysis_model.characteristic_module
+            context['economic_activity'] = self.analysis_model.operation_type_module
+            context['applicant_offer'] = self.analysis_model.applicant_offer_module
+            context['place_on_market'] = self.analysis_model.place_on_market_module
+        else:
+            print('none')
+        return context
+
+    def get(self, request, id=None, *args, **kwargs):
+        self.analysis_model = models.FullMarketAnalysisModel.objects.get(pk=id)
+        # print(self.analysis_model.get_serialised_data())
+        return super(MarketAnalysisView, self).get(request, id)
+
+class GenerateMarketAnalysisFileView(LoginRequiredMixin, View):
+    login_url = '/login'
+
+    def get(self, request, id=None, *args, **kwargs):
+        object = models.FullMarketAnalysisModel.objects.get(pk=id)
+        if object.file_path is None:
+            data = object.get_serialised_data()
+            path = ReportPDFGenerator(None, f'analiza_rynkowa_{object.identifier}', request.user).generate_market_analysis(data)
+            object.file_path = path
+            object.save(update_fields=True, user=request.user)
+        return FileResponse(open(object.file_path, 'rb'))
 
 

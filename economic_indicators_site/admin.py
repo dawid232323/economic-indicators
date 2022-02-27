@@ -53,6 +53,10 @@ class RaportBlockAdmin(admin.ModelAdmin):
 class CompanySystemUserAdmin(admin.ModelAdmin):
     list_filter = ('user', )
 
+    def save_model(self, request, obj, form, change, **kwargs):
+        user = obj.user.username
+        obj.save(user=user, **kwargs)
+
 
 @admin.register(models.FinalRaport)
 class ComanyFullRaportAdmin(admin.ModelAdmin):
@@ -68,8 +72,12 @@ class ComanyFullRaportAdmin(admin.ModelAdmin):
 class ComanyFullRaportAdmin(admin.ModelAdmin):
     list_filter = ('identifier', )
 
+    def save_model(self, request, obj, form, change, **kwargs):
+        user = obj.created_by.user.username
+        obj.save(user=user, **kwargs)
 
-@admin.register(models.FullMarketAnalisisModel)
+
+@admin.register(models.FullMarketAnalysisModel)
 class ComanyFullRaportAdmin(admin.ModelAdmin):
     list_filter = ('identifier', )
 
@@ -87,8 +95,16 @@ class ComanyFullRaportAdmin(admin.ModelAdmin):
 class ComanyFullRaportAdmin(admin.ModelAdmin):
     list_filter = ('identifier', )
 
+    def save_model(self, request, obj, form, change, **kwargs):
+        user = obj.created_by.user.username
+        obj.save(user=user, **kwargs)
+
 
 @admin.register(models.CurrentPlaceOnTheMarketModel)
 class ComanyFullRaportAdmin(admin.ModelAdmin):
     list_filter = ('identifier', )
+
+    def save_model(self, request, obj, form, change, **kwargs):
+        user = obj.created_by.user.username
+        obj.save(user=user, **kwargs)
 # admin.site.register(CompanyAdmin)

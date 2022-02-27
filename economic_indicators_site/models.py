@@ -396,27 +396,32 @@ class ApplicantOfferOperationIncomeModel(models.Model):
     income_penultimate_year_now1 = models.FloatField(default=0)
     income_last_year_now1 = models.FloatField(default=0)
     income_current_year_now1 = models.FloatField(default=0)
-    notes1 = models.CharField(max_length=150, null=True, blank=True)
+    notes1 = models.CharField(max_length=150, default='', blank=True)
+    goods_offered_now2 = models.CharField(max_length=100, default=None, null=True, blank=True)
     income_penultimate_year_now2 = models.FloatField(default=0)
     income_last_year_now2 = models.FloatField(default=0)
     income_current_year_now2 = models.FloatField(default=0)
-    notes2 = models.CharField(max_length=150, null=True, blank=True)
+    notes2 = models.CharField(max_length=150, default='', blank=True)
+    goods_offered_now3 = models.CharField(max_length=100, default=None, null=True, blank=True)
     income_penultimate_year_now3 = models.FloatField(default=0)
     income_last_year_now3 = models.FloatField(default=0)
     income_current_year_now3 = models.FloatField(default=0)
-    notes3 = models.CharField(max_length=150, null=True, blank=True)
+    notes3 = models.CharField(max_length=150, default='', blank=True)
+    goods_stopped1 = models.CharField(max_length=100, default=None, null=True, blank=True)
     income_penultimate_year_stopped1 = models.FloatField(default=0)
     income_last_year_stopped1 = models.FloatField(default=0)
     income_current_year_stopped1 = models.FloatField(default=0)
-    stopped_notes1 = models.CharField(max_length=150, null=True, blank=True)
+    stopped_notes1 = models.CharField(max_length=150, default='', blank=True)
+    goods_stopped2 = models.CharField(max_length=100, default=None, null=True, blank=True)
     income_penultimate_year_stopped2 = models.FloatField(default=0)
     income_last_year_stopped2 = models.FloatField(default=0)
     income_current_year_stopped2 = models.FloatField(default=0)
-    stopped_notes2 = models.CharField(max_length=150, null=True, blank=True)
+    stopped_notes2 = models.CharField(max_length=150, default='', blank=True)
+    goods_stopped3 = models.CharField(max_length=100, default=None, null=True, blank=True)
     income_penultimate_year_stopped3 = models.FloatField(default=0)
     income_last_year_stopped3 = models.FloatField(default=0)
     income_current_year_stopped3 = models.FloatField(default=0)
-    stopped_notes3 = models.CharField(max_length=150, null=True, blank=True)
+    stopped_notes3 = models.CharField(max_length=150, default='', blank=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None, **kwargs):
@@ -446,6 +451,7 @@ class CurrentPlaceOnTheMarketModel(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None, **kwargs):
+        print(kwargs['user'])
         logged_user = CompanySystemUser.objects.get(user__username=kwargs['user'])
         self.created_by = logged_user
         self.identifier = identify(logged_user.user_id, logged_user.second_module_raports, 0)
@@ -454,7 +460,7 @@ class CurrentPlaceOnTheMarketModel(models.Model):
         return super(CurrentPlaceOnTheMarketModel, self).save(**kwargs)
 
 
-class FullMarketAnalisisModel(models.Model):
+class FullMarketAnalysisModel(models.Model):
     created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
     created_at = models.DateField(auto_now_add=True)
     identifier = models.CharField(max_length=10, db_index=True)
@@ -462,18 +468,151 @@ class FullMarketAnalisisModel(models.Model):
     operation_type_module = models.ForeignKey(TypeOfEconomicActivityModel, on_delete=models.CASCADE)
     applicant_offer_module = models.ForeignKey(ApplicantOfferOperationIncomeModel, on_delete=models.CASCADE)
     place_on_market_module = models.ForeignKey(CurrentPlaceOnTheMarketModel, on_delete=models.CASCADE)
+    file_path = models.FilePathField(null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None, **kwargs):
         logged_user = CompanySystemUser.objects.get(user__username=kwargs['user'])
-        self.created_by = logged_user
-        self.identifier = identify(logged_user.user_id, logged_user.second_module_raports, 0)
         kwargs.__delitem__('user')
-        self.characteristic_module = BusinessCharacteristicModel.objects.get(identifier=self.identifier)
-        self.operation_type_module = TypeOfEconomicActivityModel.objects.get(identifier=self.identifier)
-        self.applicant_offer_module = ApplicantOfferOperationIncomeModel.objects.get(identifier=self.identifier)
-        self.place_on_market_module = CurrentPlaceOnTheMarketModel.objects.get(identifier=self.identifier)
-        return super(FullMarketAnalisisModel, self).save(**kwargs)
+        if not update_fields or update_fields is None:
+            self.created_by = logged_user
+            self.identifier = identify(logged_user.user_id, logged_user.second_module_raports, 0)
+            self.characteristic_module = BusinessCharacteristicModel.objects.get(identifier=self.identifier)
+            self.operation_type_module = TypeOfEconomicActivityModel.objects.get(identifier=self.identifier)
+            self.applicant_offer_module = ApplicantOfferOperationIncomeModel.objects.get(identifier=self.identifier)
+            self.place_on_market_module = CurrentPlaceOnTheMarketModel.objects.get(identifier=self.identifier)
+            logged_user.second_module_raports += 1
+            logged_user.save(user=logged_user.user.username)
+        update_fields = False
+        return super(FullMarketAnalysisModel, self).save(**kwargs)
+
+    def get_serialised_data(self):
+        return [
+            [
+                {
+                    "Data Rozpoczęcia Działalności": self.characteristic_module.business_start_date.__str__(),
+                    "Historia i przedmiot działalności": self.characteristic_module.story_subject_business
+                }
+            ],
+            [
+                {
+                    "Działalność główna/ w ramach projektu/pozostała": self.operation_type_module.main_operation1,
+                    "Charakterystyka": self.operation_type_module.main_operation1_characteristics,
+                    "Udział % w ostatnim roku obrotowym ogólnej wartości przychodów ze sprzedaży":
+                        self.operation_type_module.main_operation1_cell1,
+                    "Udział % pracyjących w ogólnej liczbie praujących": self.operation_type_module.main_operation1_cell2
+                },
+                {
+                    "Działalność główna/ w ramach projektu/pozostała": self.operation_type_module.main_operation2,
+                    "Charakterystyka": self.operation_type_module.main_operation2_characteristics,
+                    "Udział % w ostatnim roku obrotowym ogólnej wartości przychodów ze sprzedaży":
+                        self.operation_type_module.main_operation2_cell1,
+                    "Udział % pracyjących w ogólnej liczbie praujących": self.operation_type_module.main_operation2_cell2
+                },
+                {
+                    "Działalność główna/ w ramach projektu/pozostała": self.operation_type_module.main_operation3,
+                    "Charakterystyka": self.operation_type_module.main_operation3_characteristics,
+                    "Udział % w ostatnim roku obrotowym ogólnej wartości przychodów ze sprzedaży":
+                        self.operation_type_module.main_operation3_cell1,
+                    "Udział % pracyjących w ogólnej liczbie praujących": self.operation_type_module.main_operation3_cell2
+                },
+                {
+                    "Działalność główna/ w ramach projektu/pozostała": self.operation_type_module.main_operation4,
+                    "Charakterystyka": self.operation_type_module.main_operation4_characteristics,
+                    "Udział % w ostatnim roku obrotowym ogólnej wartości przychodów ze sprzedaży":
+                        self.operation_type_module.main_operation4_cell1,
+                    "Udział % pracyjących w ogólnej liczbie praujących": self.operation_type_module.main_operation4_cell2
+                }
+            ],
+            [
+                {
+                    "Produkt/Towar/Usługa": self.applicant_offer_module.goods_offered_now1,
+                    "Wartość przychodów za przedostatni rok obrotowy": self.applicant_offer_module.income_penultimate_year_now1,
+                    "Wartość przychodów za ostatni zamknięty rok obrotowy": self.applicant_offer_module.income_last_year_now1,
+                    "Wartość przychodów za okres bieżący": self.applicant_offer_module.income_current_year_now1,
+                    "Uwagi": self.applicant_offer_module.notes1
+                },
+                {
+                    "Produkt/Towar/Usługa": self.applicant_offer_module.goods_offered_now2,
+                    "Wartość przychodów za przedostatni rok obrotowy": self.applicant_offer_module.income_penultimate_year_now2,
+                    "Wartość przychodów za ostatni zamknięty rok obrotowy": self.applicant_offer_module.income_last_year_now2,
+                    "Wartość przychodów za okres bieżący": self.applicant_offer_module.income_current_year_now2,
+                    "Uwagi": self.applicant_offer_module.notes2
+                },
+                {
+                    "Produkt/Towar/Usługa": self.applicant_offer_module.goods_offered_now3,
+                    "Wartość przychodów za przedostatni rok obrotowy": self.applicant_offer_module.income_penultimate_year_now3,
+                    "Wartość przychodów za ostatni zamknięty rok obrotowy": self.applicant_offer_module.income_last_year_now3,
+                    "Wartość przychodów za okres bieżący": self.applicant_offer_module.income_current_year_now3,
+                    "Uwagi": self.applicant_offer_module.notes3
+                }
+            ],
+            [
+                {
+                    "Produkt/Towar/Usługa": self.applicant_offer_module.goods_stopped1,
+                    "Wartość przychodów za przedostatni rok obrotowy": self.applicant_offer_module.income_penultimate_year_stopped1,
+                    "Wartość przychodów za ostatni zamknięty rok obrotowy": self.applicant_offer_module.income_last_year_stopped1,
+                    "Wartość przychodów za okres bieżący": self.applicant_offer_module.income_current_year_stopped1,
+                    "Uwagi": self.applicant_offer_module.stopped_notes1
+                },
+                {
+                    "Produkt/Towar/Usługa": self.applicant_offer_module.goods_stopped2,
+                    "Wartość przychodów za przedostatni rok obrotowy": self.applicant_offer_module.income_penultimate_year_stopped2,
+                    "Wartość przychodów za ostatni zamknięty rok obrotowy": self.applicant_offer_module.income_last_year_stopped2,
+                    "Wartość przychodów za okres bieżący": self.applicant_offer_module.income_current_year_stopped2,
+                    "Uwagi": self.applicant_offer_module.stopped_notes2
+                },
+                {
+                    "Produkt/Towar/Usługa": self.applicant_offer_module.goods_stopped3,
+                    "Wartość przychodów za przedostatni rok obrotowy": self.applicant_offer_module.income_penultimate_year_stopped3,
+                    "Wartość przychodów za ostatni zamknięty rok obrotowy": self.applicant_offer_module.income_last_year_stopped3,
+                    "Wartość przychodów za okres bieżący": self.applicant_offer_module.income_current_year_stopped3,
+                    "Uwagi": self.applicant_offer_module.stopped_notes3
+                },
+            ],
+            [
+                {
+                    "Odbiorca": self.place_on_market_module.receiver1,
+                    "% udział w przychodach ze sprzedaży": self.place_on_market_module.receiver1_share
+                },
+                {
+                    "Odbiorca": self.place_on_market_module.receiver2,
+                    "% udział w przychodach ze sprzedaży": self.place_on_market_module.receiver2_share
+                },
+                {
+                    "Odbiorca": self.place_on_market_module.receiver3,
+                    "% udział w przychodach ze sprzedaży": self.place_on_market_module.receiver3_share
+                },
+                {
+                    "Odbiorca": self.place_on_market_module.receiver4,
+                    "% udział w przychodach ze sprzedaży": self.place_on_market_module.receiver4_share
+                }
+            ],
+            [
+                {
+                    "Oczekiwania i potrzeby klientów": self.place_on_market_module.clients_needs_expectations
+                }
+            ],
+            [
+                {
+                    "Możliwości rozwojowe przedsiębiorstwa": self.place_on_market_module.company_growth_possibilities
+                }
+            ],
+            [
+                {
+                    "Konkurencja przedsiębiorstwa": self.place_on_market_module.company_concurency
+                }
+            ],
+            [
+                {
+                    "Przewagi konkurencyjne przedsiębiorstwa": self.place_on_market_module.company_competitive_advantages
+                }
+            ]
+        ]
 
     def __str__(self):
         return f'Analiza rynkowa wygenerowana {self.created_at}'
+
+    class Meta:
+        ordering = ['-created_at']
+

@@ -19,5 +19,6 @@ urlpatterns = [
     path('add_applicant_op_income', views.ApplicantOfferOpeartionIncomeView.as_view()),
     path('add_curent_place_on_market', views.CurrentPlaceOnTheMarketView.as_view()),
     path('generate_market_analisis_raport', views.GenerateMarketAnalysisRaport.as_view()),
-    path('raport_analysis/<int:id>', views.MarketAnalysisView.as_view())
+    path('raport_analysis/<int:id>', views.MarketAnalysisView.as_view()),
+    path('generate_market_analysis/<int:id>', views.GenerateMarketAnalysisFileView.as_view())
 ]
