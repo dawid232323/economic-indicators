@@ -64,4 +64,31 @@ class ComanyFullRaportAdmin(admin.ModelAdmin):
     list_filter = ('identifier', )
 
 
+@admin.register(models.BusinessCharacteristicModel)
+class ComanyFullRaportAdmin(admin.ModelAdmin):
+    list_filter = ('identifier', )
+
+
+@admin.register(models.FullMarketAnalisisModel)
+class ComanyFullRaportAdmin(admin.ModelAdmin):
+    list_filter = ('identifier', )
+
+
+@admin.register(models.TypeOfEconomicActivityModel)
+class ComanyFullRaportAdmin(admin.ModelAdmin):
+    list_filter = ('identifier', )
+
+    def save_model(self, request, obj, form, change, **kwargs):
+        user = obj.created_by.user.username
+        obj.save(user=user, **kwargs)
+
+
+@admin.register(models.ApplicantOfferOperationIncomeModel)
+class ComanyFullRaportAdmin(admin.ModelAdmin):
+    list_filter = ('identifier', )
+
+
+@admin.register(models.CurrentPlaceOnTheMarketModel)
+class ComanyFullRaportAdmin(admin.ModelAdmin):
+    list_filter = ('identifier', )
 # admin.site.register(CompanyAdmin)

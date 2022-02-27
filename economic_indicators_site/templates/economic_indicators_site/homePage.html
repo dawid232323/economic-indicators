@@ -5,9 +5,9 @@
         <h1>Witaj, {{ username }}</h1>
         {{ form }}
         {% if raports|length == 0 %}
-        <h2>Nie masz jeszcze żadnych raportów</h3>
+        <h2>Nie masz jeszcze żadnych raportów analizy finansowej</h2>
         {% else %}
-            <h3 class="raportHeader">Lista twoich raportów: </h3>
+            <h3 class="raportHeader">Lista twoich raportów analizy finansowej: </h3>
             <ul class="raportList">
                 {% for raport in raports %}
                     <li class="raportList__text">
@@ -17,6 +17,36 @@
                     </li>
                 {% endfor %}
             </ul>
+        {% endif %}
+        <br/>
+        {% if market_analysis|length == 0 %}
+            <h2>Nie masz jeszcze żadnych analiz rynkowych</h2>
+            {% else %}
+                <h3 class="raportHeader">Lista Twoich Analiz Rynkowych</h3>
+                <ul class="raportList">
+                    {% for item in market_analysis %}
+                        <li class="raportList__text">
+                            <a href="/raport_analysis/{{ item.id }}">
+                                {{ item }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+        {% endif %}
+        <br/>
+        {% if internal_proceses|length == 0 %}
+            <h2>Nie Masz Jeszcze Żadnych Raportów Procesów Wewnętrznych</h2>
+            {% else %}
+                <h3 class="raportHeader">Lista Twoich Raportów Procesów Wewnętrznych</h3>
+                <ul class="raportList">
+                    {% for item in internal_proceses %}
+                        <li class="raportList__text">
+                            <a href="/raport_analysis/{{ item.id }}">
+                                {{ item }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
         {% endif %}
     {% endblock %}
 

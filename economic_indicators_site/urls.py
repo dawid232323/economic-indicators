@@ -13,5 +13,11 @@ urlpatterns = [
     path('new_raport/add_profits_loses/', views.AddNewProfitsLosesView.as_view()),
     path('generate_raport/', views.GenerateRaportView.as_view()),
     path('full_raport_view/', views.FullRaportView.as_view()),
-    path('generate_raport_file/', views.GenerateRaportFileView.as_view())
+    path('generate_raport_file/', views.GenerateRaportFileView.as_view()),
+    path('add_business_characteristic/', views.BusinessCharacteristicView.as_view()),
+    path('add_type_economic_activity', views.TypeOfEconomicActivityView.as_view()),
+    path('add_applicant_op_income', views.ApplicantOfferOpeartionIncomeView.as_view()),
+    path('add_curent_place_on_market', views.CurrentPlaceOnTheMarketView.as_view()),
+    path('generate_market_analisis_raport', views.GenerateMarketAnalysisRaport.as_view()),
+    path('raport_analysis/<int:id>', views.MarketAnalysisView.as_view())
 ]

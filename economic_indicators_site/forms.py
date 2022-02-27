@@ -1,6 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm, HiddenInput
+from django.forms.widgets import DateInput
 from django.forms import PasswordInput
 
 from . import models
@@ -133,3 +135,82 @@ class AddNewProfitsLosesForm(ModelForm):
             'owner_maintnance_costs': 'Koszty utrzymania właściciela',
             'redemption_of_fixed_assets': 'Umorzenie środków trwałych'
         }
+
+
+class AddBusinessCharacteristicForm(ModelForm):
+
+    def save(self, commit=True):
+        user = self.cleaned_data.get('user')
+        self.instance.save(user=user)
+        return self.instance
+
+    class Meta:
+        model = models.BusinessCharacteristicModel
+        exclude = ['created_by', 'identifier']
+        labels = {
+            'business_start_date': 'Data rozpoczęcia działalności',
+            'story_subject_business': 'Historia i przedmiot działalności'
+        }
+        widgets = {
+            'business_start_date': DateInput()
+        }
+
+
+class AddTypeOfEconomicActivityForm(ModelForm):
+
+    def clean(self):
+        cleaned_data = super(AddTypeOfEconomicActivityForm, self).clean()
+        cell1_sum = sum([cleaned_data.get('main_operation1_cell1'), cleaned_data.get('main_operation2_cell1'),
+                         cleaned_data.get('main_operation2_cell1'), cleaned_data.get('main_operation4_cell1')])
+        cell2_sum = sum([cleaned_data.get('main_operation1_cell2'), cleaned_data.get('main_operation2_cell2'),
+                         cleaned_data.get('main_operation3_cell2'), cleaned_data.get('main_operation4_cell2')])
+        if cell1_sum != 100:
+            raise ValidationError('Suma udziału procentowego ogólnej wartości przychodów ze sprzedaży musi'
+                                  'sumować się do 100%')
+        elif cell2_sum != 100:
+            raise ValidationError('Suma udziału pracujących w ogólnej liczbie pracujących')
+        else:
+            return super(AddTypeOfEconomicActivityForm, self).clean()
+
+    def save(self, commit=True):
+        user = self.cleaned_data.get('user')
+        self.instance.save(user=user)
+        return self.instance
+
+    class Meta:
+        model = models.TypeOfEconomicActivityModel
+        exclude = ['created_by', 'identifier']
+
+
+
+class AddNewApplicantOfferOperationIncomeForm(ModelForm):
+
+    def save(self, commit=True):
+        user = self.cleaned_data.get('user')
+        self.instance.save(user=user)
+        return self.instance
+
+    class Meta:
+        model = models.ApplicantOfferOperationIncomeModel
+        exclude = ['created_by', 'identifier']
+
+
+class AddNewCurrentPlaceOnMarketForm(ModelForm):
+
+    def clean(self):
+        cleaned_data = super(AddNewCurrentPlaceOnMarketForm, self).clean()
+        a4_sum = sum([cleaned_data.get('receiver1_share'), cleaned_data.get("receiver2_share"),
+                      cleaned_data.get('receiver3_share'), cleaned_data.get('receiver4_share')])
+        if int(a4_sum) != 100:
+            print('będzie error ', a4_sum)
+            raise ValidationError("Udział w przychodach ze sprzedaży musi sumować się do 100%")
+        return super(AddNewCurrentPlaceOnMarketForm, self).clean()
+
+    def save(self, commit=True):
+        user = self.cleaned_data.get('user')
+        self.instance.save(user=user)
+        return self.instance
+
+    class Meta:
+        model = models.CurrentPlaceOnTheMarketModel
+        exclude = ['created_by', 'identifier']

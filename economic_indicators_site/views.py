@@ -11,7 +11,7 @@ from django.views.generic import View
 
 from . import forms
 from . import models
-from .utils.raport_components import profits_loses, assets, liabilities
+from .utils.raport_components import profits_loses, assets, liabilities, functions
 from .utils.generators.to_pdf_model_generator import ReportPDFGenerator
 
 import mimetypes
@@ -100,6 +100,8 @@ class HomePageView(LoginRequiredMixin, TemplateView):
         raports = models.FullRaportBlock.objects.filter(created_by=current_system_user)
         context['username'] = self.request.user.username
         context['raports'] = models.FinalRaport.objects.filter(identifier__startswith=str(current_system_user.user.id))
+        context['market_analysis'] = models.FullMarketAnalisisModel.objects.filter(identifier__startswith=str(current_system_user.user_id))
+        context['internal_proceses'] = None
         context['user_id'] = int(current_system_user.user.id)
         context['time_periods'] = TIME_PERIODS
         # context['raports'] = models.FullRaport.objects.filter(company_id=current_system_user.company.id)
@@ -268,7 +270,7 @@ class GenerateRaportView(LoginRequiredMixin, RedirectView):
             return super(GenerateRaportView, self).get(request, *args, **kwargs)
 
 class FullRaportView(TemplateView):
-    template_name = 'economic_indicators_site/fullRaportTemplate.html'
+    template_name = 'economic_indicators_site/raports/fullRaportTemplate.html'
 
     def get_context_data(self, **kwargs):
         context = super(FullRaportView, self).get_context_data(**kwargs)
@@ -297,4 +299,66 @@ class GenerateRaportFileView(LoginRequiredMixin, View):
         file_name = self.__check_file_existance(request.GET.get('identifier'))
         response = FileResponse(open(file_name.file_path, 'rb'))
         return response
+
+
+class AddNewSecondModuleRaportBlockView(LoginRequiredMixin, FormView):
+    template_name = 'economic_indicators_site/forms/basicForm.html'
+    login_url = '/login'
+    success_url = ''
+    title = ''
+
+    def form_valid(self, form):
+        form.cleaned_data['user'] = self.request.user
+        form.save()
+        return super(AddNewSecondModuleRaportBlockView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(AddNewSecondModuleRaportBlockView, self).get_context_data()
+        context['title'] = self.title
+        context['form'] = self.form_class
+        return context
+
+class BusinessCharacteristicView(AddNewSecondModuleRaportBlockView):
+    form_class = forms.AddBusinessCharacteristicForm
+    title = 'Uzupełnij Charakterystykę Przedsiębiorstwa'
+    success_url = '/add_type_economic_activity'
+
+
+class TypeOfEconomicActivityView(AddNewSecondModuleRaportBlockView):
+    form_class = forms.AddTypeOfEconomicActivityForm
+    template_name = 'economic_indicators_site/forms/tableForm.html'
+    title = 'Uzupełnij Rodzaj Działalności Gospodarczej Przedsiębiorstwa'
+    success_url = '/add_applicant_op_income'
+
+
+class ApplicantOfferOpeartionIncomeView(AddNewSecondModuleRaportBlockView):
+    form_class = forms.AddNewApplicantOfferOperationIncomeForm
+    title = 'Uzupełnij Ofertę Wnioskodawcy i przychody z działalności'
+    success_url = '/add_curent_place_on_market'
+
+
+class CurrentPlaceOnTheMarketView(AddNewSecondModuleRaportBlockView):
+    form_class = forms.AddNewCurrentPlaceOnMarketForm
+    title = 'Uzupełnij Obecne Miejsce Na Rynku'
+    success_url = '/generate_market_analisis_raport'
+
+
+class GenerateMarketAnalysisRaport(LoginRequiredMixin, RedirectView):
+    login_url = '/login'
+    url = 'market_analysis/'
+
+    def get(self, request, *args, **kwargs):
+        current_user = models.CompanySystemUser.objects.get(user__username=request.user)
+        temp_identifier = functions.identify(current_user.user_id, current_user.second_module_raports, 0)
+        functions.clearify(models.FullMarketAnalisisModel, temp_identifier)
+        new_instance = models.FullMarketAnalisisModel()
+        new_instance.save(user=request.user)
+        self.url = self.url + str(new_instance.id)
+        return super(GenerateMarketAnalysisRaport, self).get(request)
+
+
+class MarketAnalysisView(TemplateView):
+    pass
+
+
 

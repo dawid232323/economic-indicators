@@ -17,6 +17,7 @@
             <p class="form__error">{{ item.errors.as_text }}</p>
         </div>
         {% endfor %}
+            <p class="form__error">{{ form.non_field_errors.as_text }}</p>
     </div>
     <button type="submit" class="form__button form__button--center">Następna strona</button>
 </form>

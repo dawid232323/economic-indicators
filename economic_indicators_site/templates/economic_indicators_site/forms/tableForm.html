@@ -1,0 +1,16 @@
+{% extends "economic_indicators_site/components/navigationBar.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <form method="post" class="form form--maxWidth">
+        {% csrf_token %}
+        {% for foo in form %}
+            {{ foo.label_tag }}
+            {{ foo }}
+            {{ foo.errors.as_text }}
+            <br/>
+        {% endfor %}
+        <p class="form__error">{{ form.non_field_errors.as_text }}</p>
+        <button type="submit" class="form__button form__button--center">Następna strona</button>
+    </form>
+{% endblock %}

@@ -40,6 +40,8 @@ class CompanySystemUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     num_of_reports = models.IntegerField(null=False, default=0)
+    second_module_raports = models.IntegerField(default=0)
+    third_module_raports = models.IntegerField(default=0)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None, **kwargs):
@@ -341,3 +343,137 @@ class RaportFileModel(models.Model):
     def __str__(self):
         return f'Raport {self.identifier}'
 
+
+class BusinessCharacteristicModel(models.Model):
+    created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
+    identifier = models.CharField(max_length=10, unique=True, db_index=True)
+    business_start_date = models.DateField()
+    story_subject_business = models.TextField(max_length=2000)
+
+    def save(self, **kwargs):
+        logged_user = CompanySystemUser.objects.get(user__username=kwargs['user'])
+        self.created_by = logged_user
+        self.identifier = identify(logged_user.user.id, logged_user.second_module_raports, 0)
+        kwargs.__delitem__('user')
+        clearify(BusinessCharacteristicModel, self.identifier)
+        return super(BusinessCharacteristicModel, self).save(**kwargs)
+
+
+class TypeOfEconomicActivityModel(models.Model):
+    created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
+    identifier = models.CharField(max_length=10)
+    main_operation1 = models.IntegerField(default=0)
+    main_operation1_characteristics = models.TextField(max_length=500)
+    main_operation1_cell1 = models.IntegerField()
+    main_operation1_cell2 = models.IntegerField()
+    main_operation2 = models.IntegerField(default=0)
+    main_operation2_characteristics = models.TextField(max_length=500)
+    main_operation2_cell1 = models.IntegerField()
+    main_operation2_cell2 = models.IntegerField()
+    main_operation3 = models.IntegerField(default=0)
+    main_operation3_characteristics = models.TextField(max_length=500)
+    main_operation3_cell1 = models.IntegerField()
+    main_operation3_cell2 = models.IntegerField()
+    main_operation4 = models.IntegerField(default=0)
+    main_operation4_characteristics = models.TextField(max_length=500)
+    main_operation4_cell1 = models.IntegerField()
+    main_operation4_cell2 = models.IntegerField()
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None, **kwargs):
+        logged_user = CompanySystemUser.objects.get(user__username=kwargs['user'])
+        self.created_by = logged_user
+        self.identifier = identify(logged_user.user.id, logged_user.second_module_raports, 0)
+        kwargs.__delitem__('user')
+        clearify(TypeOfEconomicActivityModel, self.identifier)
+        return super(TypeOfEconomicActivityModel, self).save(**kwargs)
+
+
+class ApplicantOfferOperationIncomeModel(models.Model):
+    created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
+    identifier = models.CharField(max_length=10, db_index=True)
+    goods_offered_now1 = models.CharField(max_length=100)
+    income_penultimate_year_now1 = models.FloatField(default=0)
+    income_last_year_now1 = models.FloatField(default=0)
+    income_current_year_now1 = models.FloatField(default=0)
+    notes1 = models.CharField(max_length=150, null=True, blank=True)
+    income_penultimate_year_now2 = models.FloatField(default=0)
+    income_last_year_now2 = models.FloatField(default=0)
+    income_current_year_now2 = models.FloatField(default=0)
+    notes2 = models.CharField(max_length=150, null=True, blank=True)
+    income_penultimate_year_now3 = models.FloatField(default=0)
+    income_last_year_now3 = models.FloatField(default=0)
+    income_current_year_now3 = models.FloatField(default=0)
+    notes3 = models.CharField(max_length=150, null=True, blank=True)
+    income_penultimate_year_stopped1 = models.FloatField(default=0)
+    income_last_year_stopped1 = models.FloatField(default=0)
+    income_current_year_stopped1 = models.FloatField(default=0)
+    stopped_notes1 = models.CharField(max_length=150, null=True, blank=True)
+    income_penultimate_year_stopped2 = models.FloatField(default=0)
+    income_last_year_stopped2 = models.FloatField(default=0)
+    income_current_year_stopped2 = models.FloatField(default=0)
+    stopped_notes2 = models.CharField(max_length=150, null=True, blank=True)
+    income_penultimate_year_stopped3 = models.FloatField(default=0)
+    income_last_year_stopped3 = models.FloatField(default=0)
+    income_current_year_stopped3 = models.FloatField(default=0)
+    stopped_notes3 = models.CharField(max_length=150, null=True, blank=True)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None, **kwargs):
+        logged_user = CompanySystemUser.objects.get(user__username=kwargs['user'])
+        self.created_by = logged_user
+        self.identifier = identify(logged_user.user_id, logged_user.second_module_raports, 0)
+        kwargs.__delitem__('user')
+        clearify(ApplicantOfferOperationIncomeModel, self.identifier)
+        return super(ApplicantOfferOperationIncomeModel, self).save(**kwargs)
+
+
+class CurrentPlaceOnTheMarketModel(models.Model):
+    created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
+    identifier = models.CharField(max_length=10)
+    receiver1 = models.CharField(max_length=100)
+    receiver1_share = models.FloatField(default=100)
+    receiver2 = models.CharField(max_length=100, null=True, blank=True)
+    receiver2_share = models.FloatField(default=0, null=True, blank=True)
+    receiver3 = models.CharField(max_length=100, null=True, blank=True)
+    receiver3_share = models.FloatField(default=0, null=True, blank=True)
+    receiver4 = models.CharField(max_length=100, null=True, blank=True)
+    receiver4_share = models.FloatField(default=0, null=True, blank=True)
+    clients_needs_expectations = models.TextField(max_length=2000)
+    company_growth_possibilities = models.TextField(max_length=2000)
+    company_concurency = models.TextField(max_length=2000)
+    company_competitive_advantages = models.TextField(max_length=2000)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None, **kwargs):
+        logged_user = CompanySystemUser.objects.get(user__username=kwargs['user'])
+        self.created_by = logged_user
+        self.identifier = identify(logged_user.user_id, logged_user.second_module_raports, 0)
+        kwargs.__delitem__('user')
+        clearify(CurrentPlaceOnTheMarketModel, self.identifier)
+        return super(CurrentPlaceOnTheMarketModel, self).save(**kwargs)
+
+
+class FullMarketAnalisisModel(models.Model):
+    created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
+    created_at = models.DateField(auto_now_add=True)
+    identifier = models.CharField(max_length=10, db_index=True)
+    characteristic_module = models.ForeignKey(BusinessCharacteristicModel, on_delete=models.CASCADE)
+    operation_type_module = models.ForeignKey(TypeOfEconomicActivityModel, on_delete=models.CASCADE)
+    applicant_offer_module = models.ForeignKey(ApplicantOfferOperationIncomeModel, on_delete=models.CASCADE)
+    place_on_market_module = models.ForeignKey(CurrentPlaceOnTheMarketModel, on_delete=models.CASCADE)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None, **kwargs):
+        logged_user = CompanySystemUser.objects.get(user__username=kwargs['user'])
+        self.created_by = logged_user
+        self.identifier = identify(logged_user.user_id, logged_user.second_module_raports, 0)
+        kwargs.__delitem__('user')
+        self.characteristic_module = BusinessCharacteristicModel.objects.get(identifier=self.identifier)
+        self.operation_type_module = TypeOfEconomicActivityModel.objects.get(identifier=self.identifier)
+        self.applicant_offer_module = ApplicantOfferOperationIncomeModel.objects.get(identifier=self.identifier)
+        self.place_on_market_module = CurrentPlaceOnTheMarketModel.objects.get(identifier=self.identifier)
+        return super(FullMarketAnalisisModel, self).save(**kwargs)
+
+    def __str__(self):
+        return f'Analiza rynkowa wygenerowana {self.created_at}'
