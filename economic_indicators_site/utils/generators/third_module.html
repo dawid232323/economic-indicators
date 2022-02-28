@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Raport Procesów Wenętrznych</title>
+</head>
+<body>
+    {% for i in range(10) %}
+        <h3>{{ titles[i] }}</h3>
+        {{ tables[i] }}
+        <br/>
+    {% endfor %}
+</body>
+</html>

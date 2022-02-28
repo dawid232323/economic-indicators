@@ -107,4 +107,19 @@ class ComanyFullRaportAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change, **kwargs):
         user = obj.created_by.user.username
         obj.save(user=user, **kwargs)
+
+
+@admin.register(models.ThirdModuleMainComponentModel)
+class ComanyFullRaportAdmin(admin.ModelAdmin):
+    list_filter = ('identifier', )
+
+
+@admin.register(models.ThirdModuleTableComponentModel)
+class ComanyFullRaportAdmin(admin.ModelAdmin):
+    list_filter = ('activity', )
+
+
+@admin.register(models.ThirdModuleRaport)
+class ComanyFullRaportAdmin(admin.ModelAdmin):
+    list_filter = ('created_by', )
 # admin.site.register(CompanyAdmin)

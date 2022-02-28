@@ -1,0 +1,207 @@
+{% extends "economic_indicators_site/components/navigationBar.html" %}
+{% load widget_tweaks %}
+{% load humanize %}
+
+{% block content %}
+    <h3 class="raportHeader">Czas wprowadzenia nowości na rynek</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Czynność</th>
+                <th>Jednostka</th>
+                <th>Czas Trwania</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in a1_table %}
+                <tr class="tableRow">
+                    <td>{{ item.activity }}</td>
+                    <td>{{ item.unit }}</td>
+                    <td>{{ item.duration }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+    <h3 class="raportHeader">Czas składania zamówień</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Czynność</th>
+                <th>Jednostka</th>
+                <th>Czas Trwania</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in a2_table %}
+                <tr class="tableRow">
+                    <td>{{ item.activity }}</td>
+                    <td>{{ item.unit }}</td>
+                    <td>{{ item.duration }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+    <h3 class="raportHeader">Czas zarządzania realizacją zamówień</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Czynność</th>
+                <th>Jednostka</th>
+                <th>Czas Trwania</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in a3_table %}
+                <tr class="tableRow">
+                    <td>{{ item.activity }}</td>
+                    <td>{{ item.unit }}</td>
+                    <td>{{ item.duration }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+    <h3 class="raportHeader">Czas obsługi promocji i wyprzedaży</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Czynność</th>
+                <th>Jednostka</th>
+                <th>Czas Trwania</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in a4_table %}
+                <tr class="tableRow">
+                    <td>{{ item.activity }}</td>
+                    <td>{{ item.unit }}</td>
+                    <td>{{ item.duration }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+    <h3 class="raportHeader">Czas zarządzania stanami magazynowymi, w tym wirtualnymi</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Czynność</th>
+                <th>Jednostka</th>
+                <th>Czas Trwania</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in a5_table %}
+                <tr class="tableRow">
+                    <td>{{ item.activity }}</td>
+                    <td>{{ item.unit }}</td>
+                    <td>{{ item.duration }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+    <h3 class="raportHeader">Czas obsługi reklamacji</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Czynność</th>
+                <th>Jednostka</th>
+                <th>Czas Trwania</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in a6_table %}
+                <tr class="tableRow">
+                    <td>{{ item.activity }}</td>
+                    <td>{{ item.unit }}</td>
+                    <td>{{ item.duration }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+    <h3 class="raportHeader">Czas udostępniania oferty handlowej potencjalnym kontrahentom</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Czynność</th>
+                <th>Jednostka</th>
+                <th>Czas Trwania</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in a7_table %}
+                <tr class="tableRow">
+                    <td>{{ item.activity }}</td>
+                    <td>{{ item.unit }}</td>
+                    <td>{{ item.duration }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+    <h3 class="raportHeader">Czas realizacji dostaw, w tym śledzenia przesyłek i dostaw</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Czynność</th>
+                <th>Jednostka</th>
+                <th>Czas Trwania</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in a8_table %}
+                <tr class="tableRow">
+                    <td>{{ item.activity }}</td>
+                    <td>{{ item.unit }}</td>
+                    <td>{{ item.duration }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+    <h3 class="raportHeader">Czas zarządzania oraz realizacji programu lojalnościowego</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Czynność</th>
+                <th>Jednostka</th>
+                <th>Czas Trwania</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in a9_table %}
+                <tr class="tableRow">
+                    <td>{{ item.activity }}</td>
+                    <td>{{ item.unit }}</td>
+                    <td>{{ item.duration }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+    <h3 class="raportHeader">Czas opisywania i aktualizacji bazy produktowej</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Czynność</th>
+                <th>Jednostka</th>
+                <th>Czas Trwania</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in a10_table %}
+                <tr class="tableRow">
+                    <td>{{ item.activity }}</td>
+                    <td>{{ item.unit }}</td>
+                    <td>{{ item.duration }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button class="form__button form__button--center"><a href="/generate_third_module_file/{{ id }}">Pobierz Raport</a></button>
+    <br/>
+{% endblock %}

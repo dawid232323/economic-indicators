@@ -648,7 +648,7 @@ class ThirdModuleMainComponentModel(models.Model):
         return result
 
     class Meta:
-        ordering = ['-type']
+        ordering = ['type']
 
 
 class ThirdModuleTableComponentModel(models.Model):
@@ -669,5 +669,26 @@ class ThirdModuleTableComponentModel(models.Model):
              update_fields=None, **kwargs):
         self.main_component = kwargs['component']
         kwargs.__delitem__('component')
+        print('saving')
         return super(ThirdModuleTableComponentModel, self).save(**kwargs)
 
+    def __str__(self): return self.activity
+
+
+class ThirdModuleRaport(models.Model):
+    created_by = models.ForeignKey(CompanySystemUser, on_delete=models.CASCADE)
+    created_at = models.DateField(auto_now_add=True)
+    identifier = models.CharField(max_length=10)
+    a1 = models.ForeignKey(ThirdModuleMainComponentModel, on_delete=models.CASCADE, related_name='a1')
+    a2 = models.ForeignKey(ThirdModuleMainComponentModel, on_delete=models.CASCADE, related_name='a2')
+    a3 = models.ForeignKey(ThirdModuleMainComponentModel, on_delete=models.CASCADE, related_name='a3')
+    a4 = models.ForeignKey(ThirdModuleMainComponentModel, on_delete=models.CASCADE, related_name='a4')
+    a5 = models.ForeignKey(ThirdModuleMainComponentModel, on_delete=models.CASCADE, related_name='a5')
+    a6 = models.ForeignKey(ThirdModuleMainComponentModel, on_delete=models.CASCADE, related_name='a6')
+    a7 = models.ForeignKey(ThirdModuleMainComponentModel, on_delete=models.CASCADE, related_name='a7')
+    a8 = models.ForeignKey(ThirdModuleMainComponentModel, on_delete=models.CASCADE, related_name='a8')
+    a9 = models.ForeignKey(ThirdModuleMainComponentModel, on_delete=models.CASCADE, related_name='a9')
+    a10 = models.ForeignKey(ThirdModuleMainComponentModel, on_delete=models.CASCADE, related_name='a10')
+    file_path = models.FilePathField(null=True, db_index=True)
+
+    def __str__(self): return f'Raport wygenerowany {self.created_at}'

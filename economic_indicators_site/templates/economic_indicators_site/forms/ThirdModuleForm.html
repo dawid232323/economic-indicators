@@ -3,7 +3,7 @@
 
 {% block content %}
 <form method="post" class="form form--maxWidth">
-    <h2 class="form__header">Teest</h2>
+    <h2 class="form__header">{{ title }}</h2>
     {% csrf_token %}
     <div class="form__inputs">
         {% for item in form %}
@@ -26,8 +26,8 @@
             Dodaj Kolejną Pozycję
         {% endif %}
     </button>
-</form>
     {% if is_repetitive %}
-        <button class="form__button form__button--center"><a href="/home">Następna sekcja</a></button>
+        <button type="submit" class="form__button form__button--center" name="next">Zapisz i Przejdź do następnej sekcji</button>
     {% endif %}
+</form>
 {% endblock %}

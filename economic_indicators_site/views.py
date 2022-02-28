@@ -101,7 +101,7 @@ class HomePageView(LoginRequiredMixin, TemplateView):
         context['username'] = self.request.user.username
         context['raports'] = models.FinalRaport.objects.filter(identifier__startswith=str(current_system_user.user.id))
         context['market_analysis'] = models.FullMarketAnalysisModel.objects.filter(identifier__startswith=str(current_system_user.user_id))
-        context['internal_proceses'] = None
+        context['internal_proceses'] = models.ThirdModuleRaport.objects.filter(identifier__startswith=str(current_system_user.user_id))
         context['user_id'] = int(current_system_user.user.id)
         context['time_periods'] = TIME_PERIODS
         # context['raports'] = models.FullRaport.objects.filter(company_id=current_system_user.company.id)
@@ -397,31 +397,162 @@ class ThirdModuleBaseView(LoginRequiredMixin, FormView):
     template_name = 'economic_indicators_site/forms/ThirdModuleForm.html'
     login_url = '/login'
     base_url = ''
+    component_name = ''
+    next_url = ''
+    type = 0
 
     def get_context_data(self, **kwargs):
-        context = super(ThirdModuleBaseView, self).get_context_data(**kwargs)
+        context = super().get_context_data()
+        context['title'] = self.component_name
         if 'rep' in self.request.GET:
             context['is_repetitive'] = True
         else:
-            context['is_repetitive'] = False
+            context['is_repetitive'] = True
         return context
 
     def form_valid(self, form):
         if 'comp_id' in self.request.GET:
-            form.cleaned_data['component'] = self.request.GET.get('comp_id')
-            self.success_url = f'{self.base_url}?comp_id={self.request.GET.get("comp_id")}&rep=1'
+            form.cleaned_data['component_id'] = self.request.GET.get('comp_id')
         else:
-            new_instance = models.ThirdModuleMainComponentModel(name='Czas wprowadzenia nowości na rynek', type=1)
+            new_instance = models.ThirdModuleMainComponentModel(name=self.component_name, type=self.type)
             new_instance.save(user=self.request.user)
-            form.cleaned_data['component'] = new_instance.id
-            self.success_url = f'{self.base_url}?comp_id={new_instance.id}&rep=1'
-        return super(ThirdModuleBaseView, self).form_valid(form)
+            form.cleaned_data['component_id'] = new_instance.id
+        if 'next' in self.request.POST:
+            self.success_url = self.next_url
+        else:
+            self.success_url = f'{self.base_url}?comp_id={form.cleaned_data.get("component_id")}&rep=1'
+        form.save()
+        return super().form_valid(form)
 
 class AddA1ThirdModuleView(ThirdModuleBaseView):
     base_url = '/add_third_a1/'
+    component_name = 'Czas wprowadzenia nowości na rynek'
+    next_url = '/add_third_a2/'
+    type = 1
+
+
+class AddA2ThirdModuleView(ThirdModuleBaseView):
+    base_url = '/add_third_a2/'
+    component_name = 'Czas składania zamówień'
+    next_url = '/add_third_a3/'
+    type = 2
+
+
+class AddA3ThirdModuleView(ThirdModuleBaseView):
+    base_url = '/add_third_a3/'
+    component_name = 'Czas zarządzania realizacją zamówień'
+    next_url = '/add_third_a4/'
+    type = 3
+
+
+class AddA4ThirdModuleView(ThirdModuleBaseView):
+    base_url = '/add_third_a4/'
+    component_name = 'Czas obsługi promocji i wyprzedaży'
+    next_url = '/add_third_a5/'
+    type = 4
+
+
+class AddA5ThirdModuleView(ThirdModuleBaseView):
+    base_url = '/add_third_a5/'
+    component_name = 'Czas zarządzania stanami magazynowymi, w tym wirtualnymi'
+    next_url = '/add_third_a6/'
+    type = 5
+
+
+class AddA6ThirdModuleView(ThirdModuleBaseView):
+    base_url = '/add_third_a6/'
+    component_name = 'Czas obsługi reklamacji'
+    next_url = '/add_third_a7/'
+    type = 6
+
+
+class AddA7ThirdModuleView(ThirdModuleBaseView):
+    base_url = '/add_third_a7/'
+    component_name = 'Czas udostępniania oferty handlowej potencjalnym kontrahentom'
+    next_url = '/add_third_a8/'
+    type = 7
+
+
+class AddA8ThirdModuleView(ThirdModuleBaseView):
+    base_url = '/add_third_a8/'
+    component_name = 'Czas realizacji dostaw, w tym śledzenia przesyłek i dostaw'
+    next_url = '/add_third_a9/'
+    type = 8
+
+
+class AddA9ThirdModuleView(ThirdModuleBaseView):
+    base_url = '/add_third_a9/'
+    component_name = 'Czas zarządzania oraz realizacji programu lojalnościowego'
+    next_url = '/add_third_a10/'
+    type = 9
+
+
+class AddA10ThirdModuleView(ThirdModuleBaseView):
+    base_url = '/add_third_a10/'
+    component_name = 'Czas opisywania i aktualizacji bazy produktowej'
+    next_url = '/generate_third_module_raport/'
+    type = 10
+
+
+class GenerateThirdModuleRaport(LoginRequiredMixin, RedirectView):
+    login_url = '/login'
+    url = '/home'
+    template_name = 'economic_indicators_site/raports/ThirdModuleRaport.html'
+    title = 'Analizy Procesów Wenętrznych'
+
+    def get(self, request, *args, **kwargs):
+        logged_user = models.CompanySystemUser.objects.get(user__username=self.request.user)
+        temp_identifier = f'{logged_user.user.id}.{logged_user.third_module_raports}'
+        print(temp_identifier)
+        raport_blocks = models.ThirdModuleMainComponentModel.objects.filter(identifier__startswith=temp_identifier)
+        print(raport_blocks)
+        new_instance = models.ThirdModuleRaport(created_by=logged_user, identifier=temp_identifier,
+                                                a1=raport_blocks[0], a2=raport_blocks[1], a3=raport_blocks[2],
+                                                a4=raport_blocks[3], a5=raport_blocks[4], a6=raport_blocks[5],
+                                                a7=raport_blocks[6], a8=raport_blocks[7], a9=raport_blocks[8],
+                                                a10=raport_blocks[9])
+        new_instance.save()
+        logged_user.third_module_raports += 1
+        logged_user.save(user=logged_user.user.username)
+        return super(GenerateThirdModuleRaport, self).get(request, *args, **kwargs)
 
 
 
+class ThirdModuleRaportView(LoginRequiredMixin, TemplateView):
+    template_name = 'economic_indicators_site/raports/ThirdModuleRaport.html'
+    login_url = '/login'
+    raport_model: models.ThirdModuleRaport = None
 
+    def get_context_data(self, **kwargs):
+        context = super(ThirdModuleRaportView, self).get_context_data()
+        if self.raport_model is not None:
+            context['id'] = self.raport_model.id
+            context['a1_table'] = models.ThirdModuleTableComponentModel.objects.filter(main_component=self.raport_model.a1)
+            context['a2_table'] = models.ThirdModuleTableComponentModel.objects.filter(main_component=self.raport_model.a2)
+            context['a3_table'] = models.ThirdModuleTableComponentModel.objects.filter(main_component=self.raport_model.a3)
+            context['a4_table'] = models.ThirdModuleTableComponentModel.objects.filter(main_component=self.raport_model.a4)
+            context['a5_table'] = models.ThirdModuleTableComponentModel.objects.filter(main_component=self.raport_model.a5)
+            context['a6_table'] = models.ThirdModuleTableComponentModel.objects.filter(main_component=self.raport_model.a6)
+            context['a7_table'] = models.ThirdModuleTableComponentModel.objects.filter(main_component=self.raport_model.a7)
+            context['a8_table'] = models.ThirdModuleTableComponentModel.objects.filter(main_component=self.raport_model.a8)
+            context['a9_table'] = models.ThirdModuleTableComponentModel.objects.filter(main_component=self.raport_model.a9)
+            context['a10_table'] = models.ThirdModuleTableComponentModel.objects.filter(main_component=self.raport_model.a10)
+        return context
 
+    def get(self, request, id=None, *args, **kwargs):
+        if id is not None:
+            self.raport_model = models.ThirdModuleRaport.objects.get(id=int(id))
+        return super().get(request, id=id, *args, **kwargs)
+
+class GenerateThirdModuleFileView(LoginRequiredMixin, View):
+    login_url = '/login'
+
+    def get(self, request, id=None, *args, **kwargs):
+        object = models.ThirdModuleRaport.objects.get(id=id)
+        logged_user = models.CompanySystemUser.objects.get(user__username=request.user)
+        if object.file_path is None:
+            new_path = ReportPDFGenerator(None, f'analiza_procesów_wewnętrznych_{object.identifier}', request.user).generate_third_module_file(object)
+            object.file_path = new_path
+            object.save()
+        return FileResponse(open(object.file_path, 'rb'))
 

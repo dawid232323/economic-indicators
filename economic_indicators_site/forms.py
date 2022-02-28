@@ -219,7 +219,7 @@ class AddNewCurrentPlaceOnMarketForm(ModelForm):
 class AddNewThirdModuleTableForm(ModelForm):
 
     def save(self, commit=True):
-        component = models.ThirdModuleMainComponentModel.objects.get(pk=int(self.cleaned_data.get('id')))
+        component = models.ThirdModuleMainComponentModel.objects.get(pk=int(self.cleaned_data.get('component_id')))
         self.instance.save(component=component)
         return self.instance
 
