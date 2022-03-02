@@ -94,18 +94,47 @@ class HomePageView(LoginRequiredMixin, TemplateView):
     template_name = 'economic_indicators_site/homePage.html'
     login_url = '/login'
 
+    def __prepare_staff_context(self, context: dict):
+        financial_analysis = []
+        market_analysis = []
+        internal_analysis = []
+        for company in models.Company.objects.all():
+            company_raports = models.FinalRaport.objects.filter(created_by__company=company)
+            company_market_analysis = models.FullMarketAnalysisModel.objects.filter(created_by__company=company)
+            company_internal_processes = models.ThirdModuleRaport.objects.filter(created_by__company=company)
+            financial_analysis.append({'company': company.company_name, 'raports': company_raports})
+            market_analysis.append({'company': company.company_name, 'raports': company_market_analysis})
+            internal_analysis.append({'company': company.company_name, 'raports': company_internal_processes})
+        context['financial'] = financial_analysis
+        context['market'] = market_analysis
+        context['internal'] = internal_analysis
+
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         current_system_user = models.CompanySystemUser.objects.get(user__username=self.request.user.username)
-        raports = models.FullRaportBlock.objects.filter(created_by=current_system_user)
+        if self.request.user.is_staff:
+            context['is_admin'] = True
+            self.__prepare_staff_context(context)
+        else:
+            context['is_admin'] = False
+            raports = models.FullRaportBlock.objects.filter(created_by=current_system_user)
+            context['raports'] = models.FinalRaport.objects.filter(
+                identifier__startswith=str(current_system_user.user.id))
+            context['market_analysis'] = models.FullMarketAnalysisModel.objects.filter(
+                identifier__startswith=str(current_system_user.user_id))
+            context['internal_proceses'] = models.ThirdModuleRaport.objects.filter(
+                identifier__startswith=str(current_system_user.user_id))
         context['username'] = self.request.user.username
-        context['raports'] = models.FinalRaport.objects.filter(identifier__startswith=str(current_system_user.user.id))
-        context['market_analysis'] = models.FullMarketAnalysisModel.objects.filter(identifier__startswith=str(current_system_user.user_id))
-        context['internal_proceses'] = models.ThirdModuleRaport.objects.filter(identifier__startswith=str(current_system_user.user_id))
         context['user_id'] = int(current_system_user.user.id)
         context['time_periods'] = TIME_PERIODS
         # context['raports'] = models.FullRaport.objects.filter(company_id=current_system_user.company.id)
         return context
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            self.template_name = 'economic_indicators_site/adminHomePage.html'
+        return super().get(request)
 
 
 class CreateNewRaportBlockView(FormView):

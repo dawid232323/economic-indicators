@@ -1,0 +1,71 @@
+{% extends "economic_indicators_site/components/navigationBar.html" %}
+
+{% block content %}
+    <h1>Witaj, {{ username }}</h1>
+    <br/>
+    {% if financial|length == 0 %}
+        <h2>Nie ma jeszcze żadnych raportów analizy finansowej</h2>
+        {% else %}
+        <h2>Raporty Analizy Finansowej</h2>
+        {% for item in financial %}
+            {% if item.raports|length == 0 %}
+                <h3 class="raportHeader">{{ item.company }} nie ma jeszcze żadnych raportów analizy finansowej</h3>
+                {% else %}
+                <h3 class="raportHeader">Lista raportów analizy finansowej dla {{ item.company }}</h3>
+                <ul class="raportList">
+                    {% for raport in item.raports %}
+                        <li class="raportList__text">
+                            <a href="/full_raport_view/?identifier={{ raport.identifier }}">
+                                {{ raport }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <br/>
+    {% if market|length == 0 %}
+        <h2>Nie ma jeszcze żadnych raportów analizy rynkowej</h2>
+        {% else %}
+        <h2>Raporty Analizy Rynkowej</h2>
+        {% for item in market %}
+            {% if item.raports|length == 0 %}
+                <h3 class="raportHeader">{{ item.company }} nie ma jeszcze żadnych raportów analizy rynkowej</h3>
+                {% else %}
+                <h3 class="raportHeader">Lista raportów analizy rynkowej dla {{ item.company }}</h3>
+                <ul class="raportList">
+                    {% for raport in item.raports %}
+                        <li class="raportList__text">
+                            <a href="/raport_analysis/{{ raport.id }}">
+                                {{ raport }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <br/>
+    {% if internal|length == 0 %}
+        <h2>Nie ma jeszcze żadnych raportów analizy procesów wewnętrznych</h2>
+        {% else %}
+        <h2>Raporty Analizy Procesów Zewnętrznych</h2>
+        {% for item in internal %}
+            {% if item.raports|length == 0 %}
+                <h3 class="raportHeader">{{ item.company }} nie ma jeszcze żadnych raportów procesów wewnętrznych</h3>
+                {% else %}
+                <h3 class="raportHeader">Lista raportów analizy procesów wewnętrznych dla {{ item.company }}</h3>
+                <ul class="raportList">
+                    {% for raport in item.raports %}
+                        <li class="raportList__text">
+                            <a href="/third_module_raport/{{ raport.id }}">
+                                {{ raport }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
