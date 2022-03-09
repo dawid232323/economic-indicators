@@ -4,10 +4,10 @@
     {% block content %}
         <h1>Witaj, {{ username }}</h1>
         {{ form }}
+        <h3 class="raportHeader">Lista twoich raportów analizy finansowej: </h3>
         {% if raports|length == 0 %}
-        <h2>Nie masz jeszcze żadnych raportów analizy finansowej</h2>
+        <h2 class="raportHeaderInfo">Nie masz jeszcze żadnych raportów analizy finansowej</h2>
         {% else %}
-            <h3 class="raportHeader">Lista twoich raportów analizy finansowej: </h3>
             <ul class="raportList">
                 {% for raport in raports %}
                     <li class="raportList__text">
@@ -19,10 +19,10 @@
             </ul>
         {% endif %}
         <br/>
+        <h3 class="raportHeader">Lista Twoich Analiz Rynkowych:</h3>
         {% if market_analysis|length == 0 %}
-            <h2>Nie masz jeszcze żadnych analiz rynkowych</h2>
+            <h2 class="raportHeaderInfo">Nie masz jeszcze żadnych analiz rynkowych</h2>
             {% else %}
-                <h3 class="raportHeader">Lista Twoich Analiz Rynkowych</h3>
                 <ul class="raportList">
                     {% for item in market_analysis %}
                         <li class="raportList__text">
@@ -34,10 +34,10 @@
                 </ul>
         {% endif %}
         <br/>
+        <h3 class="raportHeader">Lista Twoich Raportów Procesów Wewnętrznych:</h3>
         {% if internal_proceses|length == 0 %}
-            <h2>Nie Masz Jeszcze Żadnych Raportów Procesów Wewnętrznych</h2>
+            <h2 class="raportHeaderInfo">Nie Masz Jeszcze Żadnych Raportów Procesów Wewnętrznych</h2>
             {% else %}
-                <h3 class="raportHeader">Lista Twoich Raportów Procesów Wewnętrznych</h3>
                 <ul class="raportList">
                     {% for item in internal_proceses %}
                         <li class="raportList__text">

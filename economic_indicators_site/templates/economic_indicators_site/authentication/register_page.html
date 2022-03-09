@@ -23,9 +23,9 @@
                 {% for item in form %}
                 {{ item.label_tag }}
                 {% render_field item class+="form__input" %}
+                <p class="form__error">{{ item.errors.as_text }}</p>
                 {% endfor %}
             </div>
-            <p class="form__error">{{ forms.errors }}</p>
             <button type="submit" class="form__button">Zaloguj się</button>
         </form>
     </div>
