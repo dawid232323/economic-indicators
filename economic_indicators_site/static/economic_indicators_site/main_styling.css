@@ -23,13 +23,28 @@ h1 {
 }
 
 .raportHeader {
+    padding: 30px 0;
+    font-size: 45px;
+    font-weight: 700;
+    width: 100%;
+    border-bottom: 2px solid darkred;
+}
+
+.raportHeaderSmall {
+    font-size: 30px;
     padding: 10px 0;
-    font-size: 35px;
+}
+
+.raportHeaderInfo {
+    font-size: 20px;
+    font-weight: 300;
+    color: darkred;
+    padding: 10px 10px;
 }
 
 .raportList{
     list-style: decimal;
-    padding-left: 20px;
+    padding-left: 35px;
 }
 
 .raportList__text > a {
