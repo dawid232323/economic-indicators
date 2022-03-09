@@ -60,7 +60,7 @@ class LoginUserView(LoginView):
 
 class AddCompanySystemUserView(LoginRequiredMixin, CreateView):
     form_class = forms.AddUserCompanyForm
-    template_name = 'economic_indicators_site/authentication/register_page.html'
+    template_name = 'economic_indicators_site/addCompSysUser.html'
     success_url = '/home'
     login_url = '/login'
     redirect_field_name = ''
@@ -344,7 +344,6 @@ class AddNewSecondModuleRaportBlockView(LoginRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super(AddNewSecondModuleRaportBlockView, self).get_context_data()
         context['subject'] = self.title
-        context['form'] = self.form_class
         return context
 
 class BusinessCharacteristicView(AddNewSecondModuleRaportBlockView):
@@ -585,3 +584,25 @@ class GenerateThirdModuleFileView(LoginRequiredMixin, View):
             object.save()
         return FileResponse(open(object.file_path, 'rb'))
 
+
+class AddCompanyView(LoginRequiredMixin, FormView):
+    template_name = 'economic_indicators_site/forms/addCompanyForm.html'
+    form_class = forms.AddCompanyForm
+    login_url = '/login'
+    success_url = '/home'
+
+    def get(self, request, *args, **kwargs):
+        user = User.objects.get(username=request.user)
+        print(user, ' user')
+        self.success_url = f'/login/choose_company/?username={user.username}'
+        return super(AddCompanyView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        self.success_url = f'/login/choose_company/?username={self.request.user}'
+        context = super(AddCompanyView, self).get_context_data(**kwargs)
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        self.success_url = f'/login/choose_company/?username={self.request.user}'
+        return super(AddCompanyView, self).form_valid(form)

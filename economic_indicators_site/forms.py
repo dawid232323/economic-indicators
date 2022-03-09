@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, HiddenInput
-from django.forms.widgets import DateInput
+from django.forms import DateInput
 from django.forms import PasswordInput
 
 from . import models
@@ -137,6 +137,11 @@ class AddNewProfitsLosesForm(ModelForm):
         }
 
 
+class MyDateInput(DateInput):
+    input_type = 'date'
+    placeholder = ''
+
+
 class AddBusinessCharacteristicForm(ModelForm):
 
     def save(self, commit=True):
@@ -152,7 +157,7 @@ class AddBusinessCharacteristicForm(ModelForm):
             'story_subject_business': 'Historia i przedmiot działalności'
         }
         widgets = {
-            'business_start_date': DateInput()
+            'business_start_date': MyDateInput()
         }
 
 
@@ -226,3 +231,14 @@ class AddNewThirdModuleTableForm(ModelForm):
     class Meta:
         model = models.ThirdModuleTableComponentModel
         exclude = ['main_component']
+
+
+class AddCompanyForm(ModelForm):
+    class Meta:
+        model = models.Company
+        fields = '__all__'
+        labels = {
+            'company_name': 'Nazwa Firmy',
+            'company_nip': 'Nip Firmy',
+            'company_regon': 'Regon Firmy'
+        }

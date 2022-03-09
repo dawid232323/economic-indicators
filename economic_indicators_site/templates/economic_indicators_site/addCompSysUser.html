@@ -18,7 +18,7 @@
     <div class="main_content">
         <form method="post" class="form">
             {% csrf_token %}
-            <h2 class="form__header">Rejestracja do serwisu</h2>
+            <h2 class="form__header">Wybierz swoją firmę</h2>
             <div class="form__inputs">
                 {% for item in form %}
                 {{ item.label_tag }}
@@ -26,7 +26,10 @@
                 {% endfor %}
             </div>
             <p class="form__error">{{ forms.errors }}</p>
-            <button type="submit" class="form__button">Zaloguj się</button>
+            <div class="form__divider">
+                <a href="/add_company" class="form__registerText">Twojej firmy nie ma na liście?<br />Dodaj ją</a>
+                <button type="submit" class="form__button">Zaloguj się</button>
+            </div>
         </form>
     </div>
 </body>

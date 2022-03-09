@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{% static 'economic_indicators_site/main_styling.css' %}">
     <link rel="stylesheet" href="{% static 'economic_indicators_site/components_styling/navbar_styling.css' %}">
     <link rel="stylesheet" href="{% static 'economic_indicators_site/components_styling/form_styling.css' %}">
-    <title>Register Page</title>
+    <title>Add Company</title>
 </head>
 
 <body class="main-body">
@@ -18,7 +18,7 @@
     <div class="main_content">
         <form method="post" class="form">
             {% csrf_token %}
-            <h2 class="form__header">Rejestracja do serwisu</h2>
+            <h2 class="form__header">Dodaj Firmę</h2>
             <div class="form__inputs">
                 {% for item in form %}
                 {{ item.label_tag }}
@@ -26,7 +26,7 @@
                 {% endfor %}
             </div>
             <p class="form__error">{{ forms.errors }}</p>
-            <button type="submit" class="form__button">Zaloguj się</button>
+            <button type="submit" class="form__button">Dodaj</button>
         </form>
     </div>
 </body>

@@ -33,5 +33,6 @@ urlpatterns = [
     path('add_third_a10/', views.AddA10ThirdModuleView.as_view()),
     path('generate_third_module_raport/', views.GenerateThirdModuleRaport.as_view()),
     path('third_module_raport/<int:id>', views.ThirdModuleRaportView.as_view()),
-    path('generate_third_module_file/<int:id>', views.GenerateThirdModuleFileView.as_view())
+    path('generate_third_module_file/<int:id>', views.GenerateThirdModuleFileView.as_view()),
+    path('add_company/', views.AddCompanyView.as_view())
 ]
