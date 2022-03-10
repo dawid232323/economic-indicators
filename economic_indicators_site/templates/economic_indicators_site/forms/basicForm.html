@@ -3,7 +3,7 @@
 
 {% block content %}
 <form method="post" class="form form--maxWidth">
-    <h2 class="form__header">{{ subject }}</h2>
+{#    <h2 class="form__header">{{ subject }}</h2>#}
     {% csrf_token %}
     <div class="form__inputs">
         {% for item in form %}
