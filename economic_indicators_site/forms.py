@@ -185,7 +185,24 @@ class AddTypeOfEconomicActivityForm(ModelForm):
     class Meta:
         model = models.TypeOfEconomicActivityModel
         exclude = ['created_by', 'identifier']
-
+        labels = {
+            'main_operation1': 'Działalność główna/pozostała',
+            'main_operation1_characteristics': 'Charakterystyka Działalności',
+            'main_operation1_cell1': 'Udział % w ostatnim roku obrotowym ze sprzedaży',
+            'main_operation1_cell2': 'Udział % pracujących w ogólnej liczbie pracujących',
+            'main_operation2': 'Działalność główna/pozostała',
+            'main_operation2_characteristics': 'Charakterystyka Działalności',
+            'main_operation2_cell1': 'Udział % w ostatnim roku obrotowym ze sprzedaży',
+            'main_operation2_cell2': 'Udział % pracujących w ogólnej liczbie pracujących',
+            'main_operation3': 'Działalność główna/pozostała',
+            'main_operation3_characteristics': 'Charakterystyka Działalności',
+            'main_operation3_cell1': 'Udział % w ostatnim roku obrotowym ze sprzedaży',
+            'main_operation3_cell2': 'Udział % pracujących w ogólnej liczbie pracujących',
+            'main_operation4': 'Działalność główna/pozostała',
+            'main_operation4_characteristics': 'Charakterystyka Działalności',
+            'main_operation4_cell1': 'Udział % w ostatnim roku obrotowym ze sprzedaży',
+            'main_operation4_cell2': 'Udział % pracujących w ogólnej liczbie pracujących',
+        }
 
 
 class AddNewApplicantOfferOperationIncomeForm(ModelForm):
@@ -198,6 +215,39 @@ class AddNewApplicantOfferOperationIncomeForm(ModelForm):
     class Meta:
         model = models.ApplicantOfferOperationIncomeModel
         exclude = ['created_by', 'identifier']
+        labels = {
+            'goods_offered_now1': 'Produkt/Towar/Usługa',
+            'income_penultimate_year_now1': 'Wartość przychodów za przedostatni rok obrotowy',
+            'income_last_year_now1': 'Wartość przychodów ostatni zamknięty rok obrotowy',
+            'income_current_year_now1': 'Wartość przychodów za orkes bieżący',
+            'notes1': 'Uwagi',
+            'goods_offered_now2': 'Produkt/Towar/Usługa',
+            'income_penultimate_year_now2': 'Wartość przychodów za przedostatni rok obrotowy',
+            'income_last_year_now2': 'Wartość przychodów ostatni zamknięty rok obrotowy',
+            'income_current_year_now2': 'Wartość przychodów za orkes bieżący',
+            'notes2': 'Uwagi',
+            'goods_offered_now3': 'Produkt/Towar/Usługa',
+            'income_penultimate_year_now3': 'Wartość przychodów za przedostatni rok obrotowy',
+            'income_last_year_now3': 'Wartość przychodów ostatni zamknięty rok obrotowy',
+            'income_current_year_now3': 'Wartość przychodów za orkes bieżący',
+            'notes3': 'Uwagi',
+            'goods_stopped2': 'Produkt/Towar/Usługa nieoferowana w ciągu trzech lat',
+            'income_penultimate_year_stopped2': 'Wartość przychodów za przedostatni rok obrotowy',
+            'income_last_year_stopped2': 'Wartość przychodów ostatni zamknięty rok obrotowy',
+            'income_current_year_stopped2': 'Wartość przychodów za orkes bieżący',
+            'stopped_notes2': 'Uwagi',
+            'goods_stopped1': 'Produkt/Towar/Usługa nieoferowana w ciągu trzech lat',
+            'income_penultimate_year_stopped1': 'Wartość przychodów za przedostatni rok obrotowy',
+            'income_last_year_stopped1': 'Wartość przychodów ostatni zamknięty rok obrotowy',
+            'income_current_year_stopped1': 'Wartość przychodów za orkes bieżący',
+            'stopped_notes1': 'Uwagi',
+            'goods_stopped3': 'Produkt/Towar/Usługa nieoferowana w ciągu trzech lat',
+            'income_penultimate_year_stopped3': 'Wartość przychodów za przedostatni rok obrotowy',
+            'income_last_year_stopped3': 'Wartość przychodów ostatni zamknięty rok obrotowy',
+            'income_current_year_stopped3': 'Wartość przychodów za orkes bieżący',
+            'stopped_notes3': 'Uwagi',
+
+        }
 
 
 class AddNewCurrentPlaceOnMarketForm(ModelForm):
@@ -219,6 +269,20 @@ class AddNewCurrentPlaceOnMarketForm(ModelForm):
     class Meta:
         model = models.CurrentPlaceOnTheMarketModel
         exclude = ['created_by', 'identifier']
+        labels = {
+            'receiver1': 'Odbiorca',
+            'receiver1_share': '% Udział w przychodach ze sprzedaży',
+            'receiver2': 'Odbiorca',
+            'receiver2_share': '% Udział w przychodach ze sprzedaży',
+            'receiver3': 'Odbiorca',
+            'receiver3_share': '% Udział w przychodach ze sprzedaży',
+            'receiver4': 'Odbiorca',
+            'receiver4_share': '% Udział w przychodach ze sprzedaży',
+            'clients_needs_expectations': 'Oczekiwania i potrzeby klientów',
+            'company_growth_possibilities': 'Możliwości rozwojowe przedsiębiorstwa',
+            'company_concurency': 'Konkurencja przedsiębiorstwa',
+            'company_competitive_advantages': 'Przewagi konkurencyjne przedsiębiorstwa'
+        }
 
 
 class AddNewThirdModuleTableForm(ModelForm):

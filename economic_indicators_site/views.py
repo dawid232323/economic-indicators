@@ -373,7 +373,7 @@ class CurrentPlaceOnTheMarketView(AddNewSecondModuleRaportBlockView):
 
 class GenerateMarketAnalysisRaport(LoginRequiredMixin, RedirectView):
     login_url = '/login'
-    url = 'home/'
+    url = '/home'
 
     def get(self, request, *args, **kwargs):
         current_user = models.CompanySystemUser.objects.get(user__username=request.user)
