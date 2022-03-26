@@ -70,8 +70,7 @@ class AddCompanySystemUserView(LoginRequiredMixin, CreateView):
             return HttpResponseRedirect('/home')
         return super(AddCompanySystemUserView, self).get(request, *args, **kwargs)
 
-#TODO
-# Add custom error page that will tell the user that he cannot choose anyone but himself
+
     def form_valid(self, form):
         username = str(self.request.GET.get('username'))
         form.cleaned_data['user'] = self.request.GET.get('username')

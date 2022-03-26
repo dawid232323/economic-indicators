@@ -4,6 +4,7 @@
 {% block content %}
 <form method="post" class="form form--maxWidth">
     {% csrf_token %}
+    <h2 class="form__header">{{ subject }}</h2>
     <div class="form__inputs">
         {% for item in form %}
         <div class="form__singleInput">

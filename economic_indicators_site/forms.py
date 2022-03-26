@@ -57,6 +57,7 @@ class AddNewAssetsForm(ModelForm):
         exclude = ['created_by', 'time_period', 'identifier', 'tangible_fixed_assets',
                    'all_fixed_assets', 'sum_of_supplies', 'sum_of_debts', 'sum_of_current_assets']
         labels = {
+            'created_at': 'Dane za rok:',
             'intangible_fixed_assets': 'Wartości niematerialne i prawne',
             'real_estates': 'Nieruchomości',
             'tools_machines': 'Maszyny i urządzenia',
