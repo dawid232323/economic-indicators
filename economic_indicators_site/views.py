@@ -481,7 +481,7 @@ class AddA4ThirdModuleView(ThirdModuleBaseView):
 
 class AddA5ThirdModuleView(ThirdModuleBaseView):
     base_url = '/add_third_a5/'
-    component_name = 'Czas zarządzania stanami magazynowymi, w tym wirtualnymi'
+    component_name = 'Czzas zarządzania stanami magazynowymi, w tym wirtualnymi'
     next_url = '/add_third_a6/'
     type = 5
 

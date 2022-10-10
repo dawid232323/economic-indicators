@@ -1,0 +1,143 @@
+[2022-10-10 18:48:37 +0200] [90560] [DEBUG] Current configuration:
+  config: conf/gconfig.py
+  wsgi_app: Economic_Indicators.wsgi:application
+  bind: ['0.0.0.0:8015']
+  backlog: 2048
+  workers: 2
+  worker_class: sync
+  threads: 1
+  worker_connections: 1000
+  max_requests: 0
+  max_requests_jitter: 0
+  timeout: 30
+  graceful_timeout: 30
+  keepalive: 2
+  limit_request_line: 4094
+  limit_request_fields: 100
+  limit_request_field_size: 8190
+  reload: False
+  reload_engine: auto
+  reload_extra_files: []
+  spew: False
+  check_config: False
+  print_config: False
+  preload_app: False
+  sendfile: None
+  reuse_port: False
+  chdir: /Users/dawidpylak/Documents/Economic_Indicators
+  daemon: True
+  raw_env: []
+  pidfile: /Users/dawidpylak/Documents/Economic_Indicators/conf/dev.pid
+  worker_tmp_dir: None
+  user: 501
+  group: 20
+  umask: 0
+  initgroups: False
+  tmp_upload_dir: None
+  secure_scheme_headers: {'X-FORWARDED-PROTOCOL': 'ssl', 'X-FORWARDED-PROTO': 'https', 'X-FORWARDED-SSL': 'on'}
+  forwarded_allow_ips: ['127.0.0.1']
+  accesslog: /Users/dawidpylak/Documents/Economic_Indicators/conf/dev.log
+  disable_redirect_access_to_syslog: False
+  access_log_format: %(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"
+  errorlog: /Users/dawidpylak/Documents/Economic_Indicators/conf/dev.log
+  loglevel: debug
+  capture_output: True
+  logger_class: gunicorn.glogging.Logger
+  logconfig: None
+  logconfig_dict: {}
+  syslog_addr: unix:///var/run/syslog
+  syslog: False
+  syslog_prefix: None
+  syslog_facility: user
+  enable_stdio_inheritance: False
+  statsd_host: None
+  dogstatsd_tags: 
+  statsd_prefix: 
+  proc_name: None
+  default_proc_name: gunicorn
+  pythonpath: None
+  paste: None
+  on_starting: <function OnStarting.on_starting at 0x7f950614eee0>
+  on_reload: <function OnReload.on_reload at 0x7f9506163040>
+  when_ready: <function WhenReady.when_ready at 0x7f9506163160>
+  pre_fork: <function Prefork.pre_fork at 0x7f9506163280>
+  post_fork: <function Postfork.post_fork at 0x7f95061633a0>
+  post_worker_init: <function PostWorkerInit.post_worker_init at 0x7f95061634c0>
+  worker_int: <function WorkerInt.worker_int at 0x7f95061635e0>
+  worker_abort: <function WorkerAbort.worker_abort at 0x7f9506163700>
+  pre_exec: <function PreExec.pre_exec at 0x7f9506163820>
+  pre_request: <function PreRequest.pre_request at 0x7f9506163940>
+  post_request: <function PostRequest.post_request at 0x7f95061639d0>
+  child_exit: <function ChildExit.child_exit at 0x7f9506163af0>
+  worker_exit: <function WorkerExit.worker_exit at 0x7f9506163c10>
+  nworkers_changed: <function NumWorkersChanged.nworkers_changed at 0x7f9506163d30>
+  on_exit: <function OnExit.on_exit at 0x7f9506163e50>
+  proxy_protocol: False
+  proxy_allow_ips: ['127.0.0.1']
+  keyfile: None
+  certfile: None
+  ssl_version: 2
+  cert_reqs: 0
+  ca_certs: None
+  suppress_ragged_eofs: True
+  do_handshake_on_connect: False
+  ciphers: None
+  raw_paste_global_conf: []
+  strip_header_spaces: False
+[2022-10-10 18:48:37 +0200] [90560] [INFO] Starting gunicorn 20.1.0
+[2022-10-10 18:48:37 +0200] [90560] [DEBUG] Arbiter booted
+[2022-10-10 18:48:37 +0200] [90560] [INFO] Listening at: http://0.0.0.0:8015 (90560)
+[2022-10-10 18:48:37 +0200] [90560] [INFO] Using worker: sync
+[2022-10-10 18:48:37 +0200] [90561] [INFO] Booting worker with pid: 90561
+[2022-10-10 18:48:37 +0200] [90562] [INFO] Booting worker with pid: 90562
+[2022-10-10 18:48:37 +0200] [90560] [DEBUG] 2 workers
+[2022-10-10 16:49:05 +0000] [90561] [DEBUG] GET /login
+Invalid HTTP_HOST header: 'localhost:8015'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Bad Request: /login
+127.0.0.1 - - [10/Oct/2022:16:49:05 +0000] "GET /login HTTP/1.1" 400 59719 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+[2022-10-10 16:49:05 +0000] [90562] [DEBUG] GET /favicon.ico
+Invalid HTTP_HOST header: 'localhost:8015'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Bad Request: /favicon.ico
+127.0.0.1 - - [10/Oct/2022:16:49:05 +0000] "GET /favicon.ico HTTP/1.1" 400 59600 "http://localhost:8015/login" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+[2022-10-10 16:49:14 +0000] [90562] [DEBUG] GET /login
+Invalid HTTP_HOST header: 'localhost:8015'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Bad Request: /login
+127.0.0.1 - - [10/Oct/2022:16:49:14 +0000] "GET /login HTTP/1.1" 400 59856 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+[2022-10-10 16:49:14 +0000] [90561] [DEBUG] GET /favicon.ico
+Invalid HTTP_HOST header: 'localhost:8015'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Bad Request: /favicon.ico
+127.0.0.1 - - [10/Oct/2022:16:49:14 +0000] "GET /favicon.ico HTTP/1.1" 400 59600 "http://localhost:8015/login" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+[2022-10-10 16:50:39 +0000] [90561] [DEBUG] GET /login
+127.0.0.1 - - [10/Oct/2022:16:50:41 +0000] "GET /login HTTP/1.1" 301 0 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+[2022-10-10 16:50:41 +0000] [90562] [DEBUG] GET /login/
+127.0.0.1 - - [10/Oct/2022:16:50:41 +0000] "GET /login/ HTTP/1.1" 200 1632 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+[2022-10-10 16:50:41 +0000] [90561] [DEBUG] GET /static/economic_indicators_site/main_styling.css
+[2022-10-10 16:50:41 +0000] [90562] [DEBUG] GET /static/economic_indicators_site/components_styling/navbar_styling.css
+Not Found: /static/economic_indicators_site/main_styling.css
+127.0.0.1 - - [10/Oct/2022:16:50:41 +0000] "GET /static/economic_indicators_site/main_styling.css HTTP/1.1" 404 7566 "http://127.0.0.1:8015/login/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+Not Found: /static/economic_indicators_site/components_styling/navbar_styling.css
+127.0.0.1 - - [10/Oct/2022:16:50:41 +0000] "GET /static/economic_indicators_site/components_styling/navbar_styling.css HTTP/1.1" 404 7629 "http://127.0.0.1:8015/login/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+[2022-10-10 16:50:41 +0000] [90561] [DEBUG] GET /static/economic_indicators_site/components_styling/form_styling.css
+Not Found: /static/economic_indicators_site/components_styling/form_styling.css
+127.0.0.1 - - [10/Oct/2022:16:50:41 +0000] "GET /static/economic_indicators_site/components_styling/form_styling.css HTTP/1.1" 404 7623 "http://127.0.0.1:8015/login/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+[2022-10-10 16:50:41 +0000] [90562] [DEBUG] GET /favicon.ico
+Not Found: /favicon.ico
+127.0.0.1 - - [10/Oct/2022:16:50:41 +0000] "GET /favicon.ico HTTP/1.1" 404 7455 "http://127.0.0.1:8015/login/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+[2022-10-10 16:51:18 +0000] [90562] [DEBUG] POST /login/
+dawidpylak
+127.0.0.1 - - [10/Oct/2022:16:51:18 +0000] "POST /login/ HTTP/1.1" 302 0 "http://127.0.0.1:8015/login/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+[2022-10-10 16:51:18 +0000] [90561] [DEBUG] GET /home
+127.0.0.1 - - [10/Oct/2022:16:51:18 +0000] "GET /home HTTP/1.1" 200 7473 "http://127.0.0.1:8015/login/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+[2022-10-10 16:51:18 +0000] [90562] [DEBUG] GET /static/economic_indicators_site/components_styling/navbar_styling.css
+[2022-10-10 16:51:18 +0000] [90561] [DEBUG] GET /static/economic_indicators_site/main_styling.css
+Not Found: /static/economic_indicators_site/main_styling.css
+Not Found: /static/economic_indicators_site/components_styling/navbar_styling.css
+127.0.0.1 - - [10/Oct/2022:16:51:18 +0000] "GET /static/economic_indicators_site/main_styling.css HTTP/1.1" 404 7566 "http://127.0.0.1:8015/home" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+127.0.0.1 - - [10/Oct/2022:16:51:18 +0000] "GET /static/economic_indicators_site/components_styling/navbar_styling.css HTTP/1.1" 404 7629 "http://127.0.0.1:8015/home" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+[2022-10-10 16:51:18 +0000] [90561] [DEBUG] GET /static/economic_indicators_site/components_styling/form_styling.css
+Not Found: /static/economic_indicators_site/components_styling/form_styling.css
+127.0.0.1 - - [10/Oct/2022:16:51:18 +0000] "GET /static/economic_indicators_site/components_styling/form_styling.css HTTP/1.1" 404 7623 "http://127.0.0.1:8015/home" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+[2022-10-10 18:54:43 +0200] [90560] [INFO] Handling signal: term
+[2022-10-10 16:54:43 +0000] [90562] [INFO] Worker exiting (pid: 90562)
+[2022-10-10 16:54:43 +0000] [90561] [INFO] Worker exiting (pid: 90561)
+[2022-10-10 18:54:43 +0200] [90560] [INFO] Shutting down: Master
